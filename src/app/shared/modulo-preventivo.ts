@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, input, linkedSignal, signal } from '@angular/core';
 import { FormField, email, form, maxLength, pattern, required, submit, validate } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
@@ -6,7 +7,7 @@ import { NuovaRichiesta, RichiesteApi } from '../core/richieste-api';
 import { Servizio } from '../core/servizi-api';
 import { SITE, TELEFONO_LINK } from '../core/site.config';
 
-type Stato = 'compilazione' | 'inviata' | 'errore';
+type Stato = 'compilazione' | 'inviata' | 'errore' | 'troppe';
 
 const INPUT =
   'mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 ' +
@@ -98,6 +99,11 @@ const INPUT =
             Non è stato possibile inviare la richiesta. Riprova tra poco oppure chiamaci al
             <a [href]="telefonoLink" class="font-semibold underline">{{ site.telefono }}</a>.
           </p>
+        } @else if (stato() === 'troppe') {
+          <p role="alert" class="rounded-lg bg-amber-50 p-4 text-amber-900">
+            Hai già inviato diverse richieste. Riprova tra qualche minuto oppure chiamaci al
+            <a [href]="telefonoLink" class="font-semibold underline">{{ site.telefono }}</a>.
+          </p>
         }
 
         <button type="submit" [disabled]="f().submitting()"
@@ -163,8 +169,8 @@ export class ModuloPreventivo {
         try {
           await firstValueFrom(this.api.invia(this.modello()));
           this.stato.set('inviata');
-        } catch {
-          this.stato.set('errore');
+        } catch (e) {
+          this.stato.set(e instanceof HttpErrorResponse && e.status === 429 ? 'troppe' : 'errore');
         }
         return undefined;
       },
