@@ -1,7 +1,8 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
+import { adminSessioneScadutaInterceptor } from './admin/admin-auth';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
@@ -9,11 +10,12 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(
       routes,
-      // i dati dei resolver arrivano ai componenti come input()
+      // parametri, query param e dati dei resolver arrivano ai componenti come input()
       withComponentInputBinding(),
       withInMemoryScrolling({ scrollPositionRestoration: 'top' }),
     ),
-    provideHttpClient(withFetch()),
+    // la protezione CSRF (cookie XSRF-TOKEN -> header X-XSRF-TOKEN) è attiva di default in HttpClient
+    provideHttpClient(withFetch(), withInterceptors([adminSessioneScadutaInterceptor])),
     // l'HTML del server viene riusato nel browser e le chiamate HTTP non vengono ripetute
     provideClientHydration(withEventReplay()),
   ],
