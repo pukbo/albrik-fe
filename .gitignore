@@ -1,0 +1,21 @@
+# Dipendenze e build
+node_modules/
+dist/
+out-tsc/
+.angular/
+coverage/
+
+# IDE
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Log e file locali
+npm-debug.log*
+*.log
+.env
+
+# OS
+.DS_Store
+Thumbs.db
