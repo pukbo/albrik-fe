@@ -1,0 +1,32 @@
+import { Component } from '@angular/core';
+import { SITE, TELEFONO_LINK } from '../core/site.config';
+
+/** Banner "richiedi un preventivo" riutilizzato in fondo alle pagine. */
+@Component({
+  selector: 'app-cta-contatti',
+  template: `
+    <section class="bg-blue-900 text-white">
+      <div class="mx-auto max-w-6xl px-4 py-12 text-center md:py-16">
+        <h2 class="text-2xl font-bold md:text-3xl">Richiedi un preventivo gratuito</h2>
+        <p class="mx-auto mt-3 max-w-xl text-blue-100">
+          Sopralluogo senza impegno a {{ site.zonaServita }}. Rispondiamo in giornata.
+        </p>
+        <div class="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+          <a [href]="telefonoLink" class="rounded-lg bg-orange-700 px-6 py-3 font-semibold hover:bg-orange-800">
+            Chiama {{ site.telefono }}
+          </a>
+          <a
+            [href]="'mailto:' + site.email"
+            class="rounded-lg border border-white/40 px-6 py-3 font-semibold hover:bg-white/10"
+          >
+            Scrivi a {{ site.email }}
+          </a>
+        </div>
+      </div>
+    </section>
+  `,
+})
+export class CtaContatti {
+  protected readonly site = SITE;
+  protected readonly telefonoLink = TELEFONO_LINK;
+}

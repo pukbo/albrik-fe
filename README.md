@@ -2,5 +2,34 @@
 
 Frontend del sito di Albrik (impiantistica: caldaie, rinnovo bagno, climatizzazione).
 
-- **Stack:** Angular
+- **Stack:** Angular 22 con SSR (Server-Side Rendering), Tailwind CSS 4
 - **Backend:** [albrik-be](https://github.com/pukbo/albrik-be)
+
+## Avvio in locale
+
+Serve il backend avviato su http://localhost:8081, poi:
+
+```bash
+npm install
+npm start
+```
+
+Il sito è su http://localhost:4200, già renderizzato lato server.
+
+## Struttura
+
+| Percorso                          | Contenuto                                                      |
+|-----------------------------------|----------------------------------------------------------------|
+| `src/app/core/site.config.ts`     | Dati aziendali (telefono, indirizzo, email): **modificare qui** |
+| `src/app/core/seo.ts`             | Title, meta description, canonical e JSON-LD per ogni pagina    |
+| `src/app/core/structured-data.ts` | JSON-LD Schema.org (`HVACBusiness`, `Service`)                  |
+| `src/app/pages/`                  | Home, elenco servizi, dettaglio servizio, contatti, 404         |
+| `src/server.ts`                   | Server Node/Express per l'SSR, espone anche `/sitemap.xml`      |
+| `src/environments/`               | URL delle API in sviluppo e in produzione                       |
+
+## Build di produzione
+
+```bash
+npm run build
+npm run serve:ssr:albrik-fe
+```
