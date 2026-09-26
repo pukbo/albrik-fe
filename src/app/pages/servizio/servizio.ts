@@ -35,7 +35,7 @@ import NotFound from '../not-found/not-found';
           <p class="text-lg leading-relaxed whitespace-pre-line text-slate-700">{{ s.descrizione }}</p>
         </div>
       </article>
-      <app-cta-contatti />
+      <app-cta-contatti [servizioSlug]="s.slug" />
     } @else {
       <app-not-found />
     }

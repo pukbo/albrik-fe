@@ -20,6 +20,11 @@ export const routes: Routes = [
   {
     path: 'contatti',
     loadComponent: () => import('./pages/contatti/contatti'),
+    resolve: { servizi: serviziResolver },
+  },
+  {
+    path: 'privacy',
+    loadComponent: () => import('./pages/privacy/privacy'),
   },
   {
     path: '**',
