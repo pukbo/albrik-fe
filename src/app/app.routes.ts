@@ -41,6 +41,7 @@ export const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'richieste' },
       { path: 'richieste', loadComponent: () => import('./admin/pagine/richieste') },
       { path: 'richieste/:id', loadComponent: () => import('./admin/pagine/richiesta') },
+      { path: 'preventivi/:id', loadComponent: () => import('./admin/pagine/preventivo') },
     ],
   },
 

@@ -43,6 +43,73 @@ export interface UtenteAdmin {
   username: string;
 }
 
+export type StatoPreventivo = 'BOZZA' | 'INVIATO';
+
+export interface RigaPreventivo {
+  descrizione: string;
+  unitaMisura: string | null;
+  quantita: number | null;
+  prezzoUnitario: number | null;
+  aliquotaIva: number;
+}
+
+/** Campi modificabili di un preventivo (corpo del PUT). */
+export interface DatiPreventivo {
+  dataEmissione: string;
+  validitaGiorni: number;
+  clienteNome: string;
+  clienteIndirizzo: string | null;
+  clienteCodiceFiscale: string | null;
+  clienteEmail: string | null;
+  luogoIntervento: string | null;
+  oggetto: string | null;
+  tempiEsecuzione: string | null;
+  condizioniPagamento: string | null;
+  garanzie: string | null;
+  esclusioni: string | null;
+  note: string | null;
+  righe: RigaPreventivo[];
+}
+
+export interface TotaliPreventivo {
+  imponibile: number;
+  perAliquota: { aliquota: number; imponibile: number; iva: number }[];
+  iva: number;
+  totale: number;
+}
+
+export interface Preventivo extends DatiPreventivo {
+  id: number;
+  richiestaId: number;
+  numero: string;
+  stato: StatoPreventivo;
+  scadenza: string;
+  totali: TotaliPreventivo;
+  inviatoIl: string | null;
+  inviatoA: string | null;
+  aggiornatoIl: string;
+}
+
+export interface RiepilogoPreventivo {
+  id: number;
+  numero: string;
+  stato: StatoPreventivo;
+  dataEmissione: string;
+  totale: number;
+  inviatoIl: string | null;
+}
+
+export interface EmailPreventivo {
+  destinatario: string;
+  oggetto: string;
+  messaggio: string;
+}
+
+export interface ConfigurazionePreventivi {
+  aliquoteIva: number[];
+  aliquotaPredefinita: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AdminApi {
   private readonly http = inject(HttpClient);
@@ -81,5 +148,48 @@ export class AdminApi {
 
   aggiorna(id: number, modifica: { stato?: StatoRichiesta; noteInterne?: string }): Observable<RichiestaAdmin> {
     return this.http.patch<RichiestaAdmin>(`${BASE}/richieste/${id}`, modifica);
+  }
+
+  // --- Preventivi ---
+
+  configurazionePreventivi(): Observable<ConfigurazionePreventivi> {
+    return this.http.get<ConfigurazionePreventivi>(`${BASE}/preventivi/configurazione`);
+  }
+
+  preventiviDellaRichiesta(richiestaId: number): Observable<RiepilogoPreventivo[]> {
+    return this.http.get<RiepilogoPreventivo[]>(`${BASE}/richieste/${richiestaId}/preventivi`);
+  }
+
+  nuovoPreventivo(richiestaId: number): Observable<Preventivo> {
+    return this.http.post<Preventivo>(`${BASE}/richieste/${richiestaId}/preventivi`, null);
+  }
+
+  preventivo(id: number): Observable<Preventivo> {
+    return this.http.get<Preventivo>(`${BASE}/preventivi/${id}`);
+  }
+
+  salvaPreventivo(id: number, dati: DatiPreventivo): Observable<Preventivo> {
+    return this.http.put<Preventivo>(`${BASE}/preventivi/${id}`, dati);
+  }
+
+  eliminaPreventivo(id: number): Observable<void> {
+    return this.http.delete<void>(`${BASE}/preventivi/${id}`);
+  }
+
+  duplicaPreventivo(id: number): Observable<Preventivo> {
+    return this.http.post<Preventivo>(`${BASE}/preventivi/${id}/duplica`, null);
+  }
+
+  /** URL del PDF, da aprire in una nuova scheda (il cookie di sessione viene inviato dal browser). */
+  urlPdf(id: number): string {
+    return `${BASE}/preventivi/${id}/pdf`;
+  }
+
+  emailProposta(id: number): Observable<EmailPreventivo> {
+    return this.http.get<EmailPreventivo>(`${BASE}/preventivi/${id}/email`);
+  }
+
+  inviaPreventivo(id: number, email: EmailPreventivo): Observable<{ preventivo: Preventivo; simulato: boolean }> {
+    return this.http.post<{ preventivo: Preventivo; simulato: boolean }>(`${BASE}/preventivi/${id}/invia`, email);
   }
 }

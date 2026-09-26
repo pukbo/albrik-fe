@@ -1,10 +1,11 @@
 import { DatePipe } from '@angular/common';
 import { Component, inject, input, linkedSignal, numberAttribute, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { AdminApi, StatoRichiesta } from '../admin-api';
 import { STATI, infoStato } from '../stati';
+import { euro } from '../totali';
 
 @Component({
   selector: 'app-admin-richiesta',
@@ -39,6 +40,40 @@ import { STATI, infoStato } from '../stati';
           <div class="rounded-2xl bg-white p-6 shadow-sm">
             <h2 class="font-semibold text-slate-900">Messaggio</h2>
             <p class="mt-3 whitespace-pre-line text-slate-700">{{ r.messaggio }}</p>
+          </div>
+
+          <div class="rounded-2xl bg-white p-6 shadow-sm">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <h2 class="font-semibold text-slate-900">Preventivi</h2>
+              <button type="button" (click)="nuovoPreventivo(r.id)" [disabled]="creazione()"
+                class="rounded-lg bg-orange-700 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-800 disabled:opacity-60">
+                + Nuovo preventivo
+              </button>
+            </div>
+            @if (preventivi.value(); as elenco) {
+              @if (elenco.length === 0) {
+                <p class="mt-3 text-sm text-slate-600">Nessun preventivo per questa richiesta.</p>
+              } @else {
+                <ul class="mt-3 divide-y divide-slate-200">
+                  @for (p of elenco; track p.id) {
+                    <li>
+                      <a [routerLink]="['/admin/preventivi', p.id]" class="flex flex-wrap items-center gap-x-4 gap-y-1 py-3 hover:bg-slate-50">
+                        <span class="font-semibold text-slate-900">n. {{ p.numero }}</span>
+                        <span class="text-sm text-slate-500">{{ p.dataEmissione | date: 'dd/MM/yyyy' }}</span>
+                        <span class="ml-auto font-medium text-slate-900">{{ euro(p.totale) }}</span>
+                        <span [class]="'rounded-full px-2.5 py-0.5 text-xs font-semibold ' +
+                          (p.stato === 'INVIATO' ? 'bg-green-100 text-green-900' : 'bg-amber-100 text-amber-900')">
+                          {{ p.stato === 'INVIATO' ? 'Inviato' : 'Bozza' }}
+                        </span>
+                      </a>
+                    </li>
+                  }
+                </ul>
+              }
+            }
+            @if (erroreCreazione()) {
+              <p role="alert" class="mt-2 text-sm text-red-700">Creazione del preventivo non riuscita.</p>
+            }
           </div>
         </section>
 
@@ -76,6 +111,7 @@ export default class AdminRichiesta {
   readonly id = input.required({ transform: numberAttribute });
 
   private readonly api = inject(AdminApi);
+  private readonly router = inject(Router);
 
   protected readonly stati = STATI;
   protected readonly info = infoStato;
@@ -88,6 +124,27 @@ export default class AdminRichiesta {
   // valori modificabili, riallineati ogni volta che la richiesta viene (ri)caricata
   protected readonly stato = linkedSignal<StatoRichiesta>(() => this.richiesta.value()?.stato ?? 'NUOVA');
   protected readonly note = linkedSignal(() => this.richiesta.value()?.noteInterne ?? '');
+
+  protected readonly preventivi = rxResource({
+    params: () => this.id(),
+    stream: ({ params }) => this.api.preventiviDellaRichiesta(params),
+  });
+  protected readonly euro = euro;
+  protected readonly creazione = signal(false);
+  protected readonly erroreCreazione = signal(false);
+
+  protected async nuovoPreventivo(richiestaId: number): Promise<void> {
+    this.creazione.set(true);
+    this.erroreCreazione.set(false);
+    try {
+      const p = await firstValueFrom(this.api.nuovoPreventivo(richiestaId));
+      await this.router.navigate(['/admin/preventivi', p.id]);
+    } catch {
+      this.erroreCreazione.set(true);
+    } finally {
+      this.creazione.set(false);
+    }
+  }
 
   protected readonly salvataggio = signal(false);
   protected readonly esito = signal('');
