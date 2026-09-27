@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /preventivo/
 
 Sitemap: https://albrik.it/sitemap.xml

@@ -1,4 +1,4 @@
-import { StatoRichiesta } from './admin-api';
+import { StatoPreventivo, StatoRichiesta } from './admin-api';
 
 /** Etichette e colori degli stati, nell'ordine del flusso di lavoro. */
 export const STATI: { valore: StatoRichiesta; etichetta: string; classi: string }[] = [
@@ -11,4 +11,16 @@ export const STATI: { valore: StatoRichiesta; etichetta: string; classi: string 
 
 export function infoStato(stato: StatoRichiesta) {
   return STATI.find((s) => s.valore === stato) ?? STATI[0];
+}
+
+const STATI_PREVENTIVO: Record<StatoPreventivo, { etichetta: string; classi: string }> = {
+  BOZZA: { etichetta: 'Bozza', classi: 'bg-amber-100 text-amber-900' },
+  INVIATO: { etichetta: 'Inviato', classi: 'bg-violet-100 text-violet-900' },
+  ACCETTATO: { etichetta: 'Accettato', classi: 'bg-green-100 text-green-900' },
+  RIFIUTATO: { etichetta: 'Rifiutato', classi: 'bg-slate-200 text-slate-800' },
+  SOSTITUITO: { etichetta: 'Sostituito', classi: 'bg-slate-100 text-slate-600' },
+};
+
+export function infoStatoPreventivo(stato: StatoPreventivo) {
+  return STATI_PREVENTIVO[stato];
 }

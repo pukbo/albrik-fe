@@ -4,7 +4,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { AdminApi, StatoRichiesta } from '../admin-api';
-import { STATI, infoStato } from '../stati';
+import { STATI, infoStato, infoStatoPreventivo } from '../stati';
 import { euro } from '../totali';
 
 @Component({
@@ -61,9 +61,8 @@ import { euro } from '../totali';
                         <span class="font-semibold text-slate-900">n. {{ p.numero }}</span>
                         <span class="text-sm text-slate-500">{{ p.dataEmissione | date: 'dd/MM/yyyy' }}</span>
                         <span class="ml-auto font-medium text-slate-900">{{ euro(p.totale) }}</span>
-                        <span [class]="'rounded-full px-2.5 py-0.5 text-xs font-semibold ' +
-                          (p.stato === 'INVIATO' ? 'bg-green-100 text-green-900' : 'bg-amber-100 text-amber-900')">
-                          {{ p.stato === 'INVIATO' ? 'Inviato' : 'Bozza' }}
+                        <span [class]="'rounded-full px-2.5 py-0.5 text-xs font-semibold ' + infoPreventivo(p.stato).classi">
+                          {{ infoPreventivo(p.stato).etichetta }}
                         </span>
                       </a>
                     </li>
@@ -115,6 +114,7 @@ export default class AdminRichiesta {
 
   protected readonly stati = STATI;
   protected readonly info = infoStato;
+  protected readonly infoPreventivo = infoStatoPreventivo;
 
   protected readonly richiesta = rxResource({
     params: () => this.id(),

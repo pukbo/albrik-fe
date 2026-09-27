@@ -27,6 +27,11 @@ export const routes: Routes = [
     path: 'privacy',
     loadComponent: () => import('./pages/privacy/privacy'),
   },
+  {
+    // link personale inviato al cliente con il preventivo
+    path: 'preventivo/:token',
+    loadComponent: () => import('./pages/preventivo/preventivo-online'),
+  },
 
   // Pannello admin
   {

@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { AdminApi, DatiPreventivo, EmailPreventivo, Preventivo, RigaPreventivo } from '../admin-api';
 import { messaggiErrore } from '../errori';
+import { infoStatoPreventivo } from '../stati';
 import { calcolaTotali, euro, importoRiga } from '../totali';
 
 type CampoTesto = Exclude<keyof DatiPreventivo, 'righe' | 'validitaGiorni'>;
@@ -56,11 +57,9 @@ function datiDi(p: Preventivo): DatiPreventivo {
           <div>
             <div class="flex flex-wrap items-center gap-3">
               <h1 class="text-2xl font-bold text-slate-900">Preventivo n. {{ p.numero }}</h1>
-              @if (solaLettura()) {
-                <span class="rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-900">Inviato</span>
-              } @else {
-                <span class="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-900">Bozza</span>
-              }
+              <span [class]="'rounded-full px-2.5 py-0.5 text-xs font-semibold ' + infoStato(p.stato).classi">
+                {{ infoStato(p.stato).etichetta }}
+              </span>
             </div>
             @if (p.inviatoIl) {
               <p class="mt-1 text-sm text-slate-600">
@@ -75,7 +74,9 @@ function datiDi(p: Preventivo): DatiPreventivo {
             <button type="button" (click)="anteprima()" [disabled]="occupato()" [class]="bottoneSecondario">Anteprima PDF</button>
             @if (solaLettura()) {
               <button type="button" (click)="nuovaVersione()" [disabled]="occupato()" [class]="bottoneSecondario">Crea nuova versione</button>
-              <button type="button" (click)="apriInvio()" [disabled]="occupato()" [class]="bottoneSecondario">Invia di nuovo</button>
+              @if (p.stato === 'INVIATO' || p.stato === 'ACCETTATO') {
+                <button type="button" (click)="apriInvio()" [disabled]="occupato()" [class]="bottoneSecondario">Invia di nuovo</button>
+              }
             } @else {
               <button type="button" (click)="elimina()" [disabled]="occupato()"
                 class="rounded-lg px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-50">Elimina bozza</button>
@@ -100,6 +101,31 @@ function datiDi(p: Preventivo): DatiPreventivo {
             <p class="rounded-lg bg-green-50 p-3 text-sm text-green-900">{{ messaggio() }}</p>
           }
         </div>
+
+        <!-- Esito online e link personale del cliente -->
+        @if (p.esito; as e) {
+          <section [class]="'mt-4 rounded-2xl p-5 ' + (p.stato === 'ACCETTATO' ? 'bg-green-50 text-green-900' : 'bg-slate-100 text-slate-800')"
+            aria-label="Risposta del cliente">
+            <p class="font-semibold">
+              {{ p.stato === 'ACCETTATO' ? 'Accettato online' : 'Rifiutato online' }}
+              il {{ e.il | date: 'dd/MM/yyyy' }} alle {{ e.il | date: 'HH:mm' }}
+              @if (e.nome) { da {{ e.nome }} }
+            </p>
+            @if (e.note) { <p class="mt-1 text-sm">Motivo: {{ e.note }}</p> }
+            <p class="mt-1 text-xs opacity-75">IP registrato: {{ e.ip }}</p>
+          </section>
+        }
+        @if (p.linkAccettazione) {
+          <div class="mt-4 flex flex-wrap items-center gap-2 rounded-2xl bg-white p-4 text-sm shadow-sm">
+            <span class="font-medium text-slate-700">Link del cliente:</span>
+            <a [href]="p.linkAccettazione" target="_blank" rel="noopener" class="min-w-0 truncate text-blue-800 hover:underline">
+              {{ p.linkAccettazione }}
+            </a>
+            <button type="button" (click)="copiaLink(p.linkAccettazione)" class="ml-auto rounded-md px-2 py-1 font-semibold text-slate-700 hover:bg-slate-100">
+              {{ copiato() ? 'Copiato ✓' : 'Copia' }}
+            </button>
+          </div>
+        }
 
         <!-- Pannello di invio -->
         @if (email(); as m) {
@@ -289,7 +315,19 @@ export default class AdminPreventivo {
     const p = this.preventivo.value();
     return !!p && JSON.stringify(this.bozza()) !== JSON.stringify(datiDi(p));
   });
-  protected readonly solaLettura = computed(() => this.preventivo.value()?.stato === 'INVIATO');
+  /** Solo le bozze sono modificabili: dall'invio in poi si crea una nuova versione. */
+  protected readonly solaLettura = computed(() => {
+    const stato = this.preventivo.value()?.stato;
+    return !!stato && stato !== 'BOZZA';
+  });
+  protected readonly infoStato = infoStatoPreventivo;
+  protected readonly copiato = signal(false);
+
+  protected async copiaLink(link: string): Promise<void> {
+    await navigator.clipboard.writeText(link);
+    this.copiato.set(true);
+    setTimeout(() => this.copiato.set(false), 2000);
+  }
   protected readonly totali = computed(() => calcolaTotali(this.bozza()?.righe ?? []));
   protected readonly aliquote = computed(() => this.configurazione.value()?.aliquoteIva ?? [4, 10, 22]);
 

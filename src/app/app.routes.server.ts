@@ -10,6 +10,11 @@ export const serverRoutes: ServerRoute[] = [
     path: 'admin',
     renderMode: RenderMode.Client,
   },
+  // Link personale del preventivo: dati personali, solo nel browser e mai indicizzato
+  {
+    path: 'preventivo/**',
+    renderMode: RenderMode.Client,
+  },
   /*
    * Sito pubblico: renderizzato sul server a ogni richiesta, così i crawler ricevono
    * sempre HTML completo e un nuovo servizio nel DB è online senza rifare la build.

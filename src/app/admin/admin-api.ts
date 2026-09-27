@@ -43,7 +43,7 @@ export interface UtenteAdmin {
   username: string;
 }
 
-export type StatoPreventivo = 'BOZZA' | 'INVIATO';
+export type StatoPreventivo = 'BOZZA' | 'INVIATO' | 'ACCETTATO' | 'RIFIUTATO' | 'SOSTITUITO';
 
 export interface RigaPreventivo {
   descrizione: string;
@@ -87,6 +87,10 @@ export interface Preventivo extends DatiPreventivo {
   totali: TotaliPreventivo;
   inviatoIl: string | null;
   inviatoA: string | null;
+  /** Link personale di accettazione, presente dopo il primo invio. */
+  linkAccettazione: string | null;
+  /** Accettazione o rifiuto registrati online dal cliente. */
+  esito: { il: string; nome: string | null; ip: string; note: string | null } | null;
   aggiornatoIl: string;
 }
 
