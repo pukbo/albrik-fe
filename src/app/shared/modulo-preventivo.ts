@@ -192,7 +192,7 @@ export class ModuloPreventivo {
   );
   protected readonly nomeCategoria = computed(() => CATEGORIE[this.categoria() ?? 'CALDAIA']);
   protected readonly opzioni = computed(() => [
-    { valore: 'catalogo', etichetta: 'Voglio sceglierne una' },
+    { valore: 'catalogo', etichetta: `Voglio sceglierne ${this.nomeCategoria().pronome}` },
     { valore: 'mio', etichetta: `Ho già ${this.nomeCategoria().conArticolo}` },
     { valore: 'consiglio', etichetta: 'Consigliatemi voi' },
   ]);

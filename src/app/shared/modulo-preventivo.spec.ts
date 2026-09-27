@@ -128,6 +128,22 @@ describe('ModuloPreventivo', () => {
       expect(req.request.body).toMatchObject({ prodottoSlug: null, prodottoDelCliente: true });
     });
 
+    it('per i condizionatori adatta i testi al maschile', async () => {
+      const { fixture, el } = crea();
+      fixture.componentRef.setInput('servizi', [
+        { slug: 'installazione-condizionatori-caserta', titolo: 'Installazione condizionatori', categoriaProdotti: 'CONDIZIONATORE' },
+      ]);
+      fixture.componentRef.setInput('servizioIniziale', 'installazione-condizionatori-caserta');
+      fixture.detectChanges();
+      http.expectOne((r) => r.params.get('categoria') === 'CONDIZIONATORE').flush([]);
+      await fixture.whenStable();
+
+      const testo = el.querySelector('fieldset')!.textContent!;
+      expect(testo).toContain('Quale condizionatore vuoi installare?');
+      expect(testo).toContain('Voglio sceglierne uno');
+      expect(testo).toContain('Ho già il condizionatore');
+    });
+
     it('senza catalogo non mostra la scelta e non invia dati di prodotto', async () => {
       const { fixture, el, compila } = crea();
       fixture.componentRef.setInput('servizi', servizi);

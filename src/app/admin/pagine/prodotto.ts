@@ -400,7 +400,7 @@ export default class AdminProdotto {
     if (!b) return;
     const nome = `${b.marca} ${b.modello}`.trim();
     const cat = CATEGORIE[b.categoria];
-    const titolo = `${nome} – ${cat.titolo.toLowerCase()} | ${SITE.nome}`;
+    const titolo = `${nome} – ${cat.tipo} | ${SITE.nome}`;
     this.imposta({
       metaTitle: titolo.length <= 70 ? titolo : `${nome} | ${SITE.nome}`.slice(0, 70),
       metaDescription: (

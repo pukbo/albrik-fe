@@ -40,10 +40,7 @@ import NotFound from '../not-found/not-found';
 
             <div class="mt-8 rounded-2xl bg-slate-100 p-6 text-slate-700">
               <h2 class="text-lg font-bold text-slate-900">Installazione a {{ site.zonaServita }}</h2>
-              <p class="mt-2">
-                Sopralluogo gratuito, smontaggio e smaltimento della vecchia {{ info().singolare }}, installazione a norma,
-                prima accensione e pratiche comprese nel preventivo.
-              </p>
+              <p class="mt-2">{{ info().installazione }}</p>
             </div>
 
             <a [routerLink]="'/' + info().percorso" class="mt-8 inline-block font-semibold text-blue-800 hover:underline">

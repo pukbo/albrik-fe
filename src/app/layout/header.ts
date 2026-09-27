@@ -15,7 +15,7 @@ import { Logo } from '../shared/logo';
 
         <button
           type="button"
-          class="inline-flex size-11 items-center justify-center rounded-lg text-slate-700 hover:bg-slate-100 md:hidden"
+          class="inline-flex size-11 items-center justify-center rounded-lg text-slate-700 hover:bg-slate-100 lg:hidden"
           [attr.aria-expanded]="aperto()"
           aria-controls="menu-principale"
           (click)="aperto.set(!aperto())"
@@ -30,9 +30,9 @@ import { Logo } from '../shared/logo';
           </svg>
         </button>
 
-        <nav id="menu-principale" aria-label="Menu principale" class="md:block" [class.hidden]="!aperto()">
+        <nav id="menu-principale" aria-label="Menu principale" class="lg:block" [class.hidden]="!aperto()">
           <ul
-            class="absolute inset-x-0 top-16 flex flex-col gap-1 border-b border-slate-200 bg-white p-4 shadow-lg md:static md:flex-row md:items-center md:gap-2 md:border-0 md:p-0 md:shadow-none"
+            class="absolute inset-x-0 top-16 flex flex-col gap-1 border-b border-slate-200 bg-white p-4 shadow-lg lg:static lg:flex-row lg:items-center lg:gap-2 lg:border-0 lg:p-0 lg:shadow-none"
           >
             @for (voce of voci; track voce.path) {
               <li>
@@ -41,7 +41,7 @@ import { Logo } from '../shared/logo';
                   routerLinkActive="text-blue-800 bg-blue-50"
                   [routerLinkActiveOptions]="{ exact: voce.path === '/' }"
                   ariaCurrentWhenActive="page"
-                  class="block rounded-lg px-4 py-3 font-medium text-slate-700 hover:bg-slate-100 md:py-2"
+                  class="block rounded-lg px-4 py-3 font-medium text-slate-700 hover:bg-slate-100 lg:py-2"
                   (click)="chiudi()"
                 >
                   {{ voce.label }}
@@ -51,7 +51,7 @@ import { Logo } from '../shared/logo';
             <li>
               <a
                 [href]="telefonoLink"
-                class="pulsante mt-2 block rounded-lg bg-orange-700 px-4 py-3 text-center font-semibold text-white hover:bg-orange-800 md:mt-0 md:ml-2 md:py-2"
+                class="pulsante mt-2 block rounded-lg bg-orange-700 px-4 py-3 text-center font-semibold text-white hover:bg-orange-800 lg:mt-0 lg:ml-2 lg:py-2"
               >
                 Chiama ora
               </a>
@@ -70,6 +70,7 @@ export class Header {
     { path: '/', label: 'Home' },
     { path: '/servizi', label: 'Servizi' },
     { path: '/caldaie', label: 'Caldaie' },
+    { path: '/condizionatori', label: 'Condizionatori' },
     { path: '/contatti', label: 'Contatti' },
   ];
 

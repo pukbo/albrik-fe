@@ -57,7 +57,7 @@ import NotFound from '../not-found/not-found';
                     <h2 id="titolo-modelli" class="mt-1 text-2xl font-bold text-slate-900 md:text-3xl">Scegli il modello</h2>
                   </div>
                   <a [routerLink]="'/' + cat.percorso" class="font-semibold text-blue-800 hover:underline">
-                    Tutte le {{ cat.plurale.toLowerCase() }} →
+                    Vedi tutto il catalogo →
                   </a>
                 </div>
                 <ul class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

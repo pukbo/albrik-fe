@@ -1,7 +1,7 @@
 import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { fotoProdotto } from '../core/immagini';
-import { Prodotto } from '../core/prodotti-api';
+import { Prodotto, potenzaLeggibile } from '../core/prodotti-api';
 import { SchedaTecnica } from './scheda-tecnica';
 
 /**
@@ -21,10 +21,18 @@ import { SchedaTecnica } from './scheda-tecnica';
             class="foto aspect-[4/3] w-full object-contain p-5" />
         } @else {
           <div class="flex aspect-[4/3] items-center justify-center" aria-hidden="true">
-            <svg viewBox="0 0 64 64" class="foto size-24">
-              <path d="M32 5 C32 5 12 27 12 40 A20 20 0 0 0 52 40 C52 27 32 5 32 5 Z" fill="#1e40af" opacity="0.18" />
-              <path d="M32 28 C32 28 24 37 24 43 A8 8 0 0 0 40 43 C40 37 32 28 32 28 Z" fill="#f97316" opacity="0.7" />
-            </svg>
+            @if (p().categoria === 'CONDIZIONATORE') {
+              <!-- fiocco di neve -->
+              <svg viewBox="0 0 24 24" class="foto size-20 text-blue-800/40" fill="none" stroke="currentColor"
+                stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2v20M4.2 7l15.6 10M4.2 17 19.8 7M9 3.5l3 2.5 3-2.5M9 20.5l3-2.5 3 2.5M3 10.5l3.6-.2L5 7M21 13.5l-3.6.2L19 17M3 13.5l3.6.2L5 17M21 10.5l-3.6-.2L19 7" />
+              </svg>
+            } @else {
+              <svg viewBox="0 0 64 64" class="foto size-24">
+                <path d="M32 5 C32 5 12 27 12 40 A20 20 0 0 0 52 40 C52 27 32 5 32 5 Z" fill="#1e40af" opacity="0.18" />
+                <path d="M32 28 C32 28 24 37 24 43 A8 8 0 0 0 40 43 C40 37 32 28 32 28 Z" fill="#f97316" opacity="0.7" />
+              </svg>
+            }
           </div>
         }
 
@@ -41,7 +49,7 @@ import { SchedaTecnica } from './scheda-tecnica';
 
       <div class="flex flex-1 flex-col px-2 pt-4 pb-2">
         <p class="font-mono text-xs font-semibold tracking-[0.2em] text-orange-300 uppercase">
-          {{ p().marca }}@if (p().potenzaKw) { · {{ p().potenzaKw }} kW }
+          {{ p().marca }}@if (potenza(); as pot) { · {{ pot }} }
         </p>
         <h3 class="mt-1 text-xl font-bold">
           <a [routerLink]="p().percorso" class="after:absolute after:inset-0 after:rounded-3xl focus-visible:outline-none">
@@ -120,4 +128,5 @@ export class ProdottoCard {
 
   protected readonly p = computed(() => this.prodotto());
   protected readonly foto = computed(() => fotoProdotto(this.prodotto().immagine));
+  protected readonly potenza = computed(() => potenzaLeggibile(this.prodotto()));
 }

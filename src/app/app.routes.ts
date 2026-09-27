@@ -19,7 +19,7 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/servizio/servizio'),
     resolve: { servizio: servizioResolver },
   },
-  // Catalogo: una coppia di route per categoria (i condizionatori si aggiungeranno qui)
+  // Catalogo: una coppia di route per categoria (percorso come in CATEGORIE di core/prodotti-api.ts)
   {
     path: 'caldaie',
     loadComponent: () => import('./pages/catalogo/catalogo'),
@@ -30,6 +30,18 @@ export const routes: Routes = [
     path: 'caldaie/:slug',
     loadComponent: () => import('./pages/prodotto/prodotto'),
     data: { categoria: 'CALDAIA' },
+    resolve: { prodotto: prodottoResolver, servizi: serviziResolver },
+  },
+  {
+    path: 'condizionatori',
+    loadComponent: () => import('./pages/catalogo/catalogo'),
+    data: { categoria: 'CONDIZIONATORE' },
+    resolve: { prodotti: prodottiResolver, servizi: serviziResolver },
+  },
+  {
+    path: 'condizionatori/:slug',
+    loadComponent: () => import('./pages/prodotto/prodotto'),
+    data: { categoria: 'CONDIZIONATORE' },
     resolve: { prodotto: prodottoResolver, servizi: serviziResolver },
   },
   {

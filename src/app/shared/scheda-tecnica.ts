@@ -1,5 +1,5 @@
 import { Component, computed, input } from '@angular/core';
-import { Prodotto } from '../core/prodotti-api';
+import { Prodotto, potenzaLeggibile } from '../core/prodotti-api';
 
 interface Statistica {
   chiave: string;
@@ -86,8 +86,14 @@ const SEGMENTI = [1, 2, 3, 4, 5];
               Classe {{ classe }}
             </span>
           }
-          @if (prodotto().potenzaKw; as kw) {
-            <span class="rounded-md bg-white/10 px-2.5 py-1 font-semibold text-blue-100">{{ kw }} kW</span>
+          @if (potenza(); as pot) {
+            <span class="rounded-md bg-white/10 px-2.5 py-1 font-semibold text-blue-100">{{ pot }}</span>
+          }
+          <!-- per i condizionatori la potenza principale è in BTU: i kW restano come dato tecnico -->
+          @if (prodotto().categoria === 'CONDIZIONATORE' && prodotto().potenzaKw) {
+            <span class="rounded-md bg-white/10 px-2.5 py-1 font-semibold text-blue-100">
+              {{ potenzaLeggibileKw() }}
+            </span>
           }
         </div>
       }
@@ -195,6 +201,11 @@ export class SchedaTecnica {
 
   protected readonly segmenti = SEGMENTI;
   protected readonly v = computed(() => this.prodotto().valutazioni);
+  protected readonly potenza = computed(() => potenzaLeggibile(this.prodotto()));
+  /** Stessa potenza in kW, come se fosse una caldaia (es. "3,5 kW"). */
+  protected readonly potenzaLeggibileKw = computed(() =>
+    potenzaLeggibile({ categoria: 'CALDAIA', potenzaKw: this.prodotto().potenzaKw }),
+  );
 
   protected readonly statistiche = computed<Statistica[]>(() => {
     const v = this.v();
