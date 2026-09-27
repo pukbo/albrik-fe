@@ -1,15 +1,16 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { SITE, TELEFONO_LINK } from '../core/site.config';
+import { Logo } from '../shared/logo';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, Logo],
   template: `
     <header class="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
       <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-        <a routerLink="/" class="text-2xl font-extrabold tracking-tight text-blue-900" (click)="chiudi()">
-          {{ site.nome }}
+        <a routerLink="/" [attr.aria-label]="site.nome + ', torna alla home'" (click)="chiudi()">
+          <app-logo [dimensione]="36" />
         </a>
 
         <button

@@ -1,16 +1,17 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SITE, TELEFONO_LINK } from '../core/site.config';
+import { Logo } from '../shared/logo';
 
 @Component({
   selector: 'app-footer',
-  imports: [RouterLink],
+  imports: [RouterLink, Logo],
   template: `
-    <footer class="bg-slate-900 text-slate-300">
+    <footer class="bg-blue-950 text-blue-100">
       <div class="mx-auto grid max-w-6xl gap-8 px-4 py-12 md:grid-cols-3">
         <div>
-          <p class="text-xl font-extrabold text-white">{{ site.nome }}</p>
-          <p class="mt-2 text-sm">{{ site.descrizione }}</p>
+          <app-logo [dimensione]="40" [scuro]="true" />
+          <p class="mt-4 text-sm">{{ site.descrizione }}</p>
         </div>
 
         <address class="not-italic">
@@ -34,7 +35,7 @@ import { SITE, TELEFONO_LINK } from '../core/site.config';
           </ul>
         </nav>
       </div>
-      <p class="border-t border-slate-800 py-4 text-center text-xs text-slate-400">
+      <p class="border-t border-blue-900 py-4 text-center text-xs text-blue-200">
         © {{ anno }} {{ site.nome }} – Impiantistica a {{ site.indirizzo.citta }}
       </p>
     </footer>

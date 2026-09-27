@@ -25,6 +25,8 @@
               }
             ],
             "styles": [
+              "@fontsource/outfit/latin-500.css",
+              "@fontsource/outfit/latin-700.css",
               "src/styles.css"
             ],
             "server": "src/main.server.ts",

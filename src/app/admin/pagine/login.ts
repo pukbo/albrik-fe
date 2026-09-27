@@ -3,17 +3,18 @@ import { Component, inject, input, signal } from '@angular/core';
 import { FormField, form, required, submit } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 import { Seo } from '../../core/seo';
+import { Logo } from '../../shared/logo';
 import { AdminAuth } from '../admin-auth';
 
 @Component({
   selector: 'app-admin-login',
-  imports: [FormField],
+  imports: [FormField, Logo],
   template: `
     <main class="flex min-h-dvh items-center justify-center bg-slate-100 px-4">
       <form novalidate (submit)="accedi($event)" class="w-full max-w-sm space-y-5 rounded-2xl bg-white p-8 shadow-sm">
         <div>
-          <p class="text-2xl font-extrabold text-blue-900">Albrik</p>
-          <h1 class="mt-1 text-lg font-semibold text-slate-700">Pannello amministrazione</h1>
+          <app-logo [dimensione]="40" [tagline]="false" />
+          <h1 class="mt-4 text-lg font-semibold text-slate-700">Pannello amministrazione</h1>
         </div>
 
         <div>

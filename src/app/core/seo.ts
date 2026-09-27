@@ -17,6 +17,7 @@ export interface PaginaSeo {
 }
 
 const JSON_LD_ID = 'jsonld-pagina';
+const IMMAGINE_PREDEFINITA = '/og-albrik.png';
 
 /** Aggiorna title, meta tag, canonical e JSON-LD. Funziona anche in SSR. */
 @Injectable({ providedIn: 'root' })
@@ -37,13 +38,9 @@ export class Seo {
     this.meta.updateTag({ property: 'og:title', content: pagina.title });
     this.meta.updateTag({ property: 'og:description', content: pagina.description });
     this.meta.updateTag({ property: 'og:url', content: url });
-    if (pagina.immagine) {
-      this.meta.updateTag({ property: 'og:image', content: SITE.url + pagina.immagine });
-      this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
-    } else {
-      this.meta.removeTag("property='og:image'");
-      this.meta.removeTag("name='twitter:card'");
-    }
+    // senza foto propria si usa l'immagine del marchio (logo su blu, 1200×630)
+    this.meta.updateTag({ property: 'og:image', content: SITE.url + (pagina.immagine ?? IMMAGINE_PREDEFINITA) });
+    this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
 
     this.impostaCanonical(url);
     this.impostaJsonLd(pagina.jsonLd);

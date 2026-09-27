@@ -1,17 +1,21 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Seo } from '../../core/seo';
+import { Logo } from '../../shared/logo';
 import { AdminAuth } from '../admin-auth';
 
 @Component({
   selector: 'app-admin-layout',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, Logo],
   host: { class: 'flex min-h-dvh flex-col bg-slate-100' },
   template: `
     <header class="bg-blue-950 text-white">
       <div class="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4">
         <div class="flex items-center gap-6">
-          <a routerLink="/admin" class="font-extrabold">Albrik <span class="font-normal text-blue-200">Admin</span></a>
+          <a routerLink="/admin" class="flex items-center gap-2" aria-label="Albrik Admin, torna alle richieste">
+            <app-logo [dimensione]="28" [scuro]="true" [tagline]="false" />
+            <span class="text-sm text-blue-200">Admin</span>
+          </a>
           <nav aria-label="Menu pannello">
             <a routerLink="/admin/richieste" routerLinkActive="bg-white/15" ariaCurrentWhenActive="page"
               class="rounded-md px-3 py-1.5 text-sm font-medium hover:bg-white/10">Richieste</a>

@@ -1,6 +1,17 @@
 @import 'tailwindcss';
 
 @theme {
-  /* Font di sistema: nessun download di font, caricamento istantaneo */
+  /* Testo: font di sistema, nessun download e caricamento istantaneo */
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  /* Titoli e logo: Outfit, servito dal sito stesso (@fontsource, solo latin 500/700) */
+  --font-display: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+@layer base {
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
 }
