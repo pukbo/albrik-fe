@@ -180,28 +180,24 @@
     animation: onda-clic 0.6s ease-out forwards;
   }
 
-  /* parole evidenziate nel titolo della home: arancio con una sottolineatura "a mano" che si disegna */
+  /*
+   * Parole evidenziate nel titolo della home: arancio, con un riflesso di luce che le attraversa una volta
+   * all'apertura. Eccezione alla regola transform/opacity: anima la posizione dello sfondo di poche parole,
+   * una sola volta.
+   */
   .evidenza {
-    position: relative;
     white-space: nowrap;
     color: #fdba74;
+    background: linear-gradient(105deg, #fdba74 0%, #fdba74 42%, #fff7ed 50%, #fdba74 58%, #fdba74 100%) 100% 0 / 260% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: riflesso 1.5s cubic-bezier(0.4, 0, 0.2, 1) 0.6s both;
   }
 
-  .evidenza::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -0.12em;
-    height: 0.3em;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M2 9C40 3 90 2 198 6' fill='none' stroke='%23f97316' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")
-      no-repeat center / 100% 100%;
-    transform-origin: left center;
-    animation: sottolinea 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.45s both;
-  }
-
-  .intro-vista .evidenza::after {
+  .intro-vista .evidenza {
     animation: none;
+    background-position: 0 0;
   }
 
   /* puntino "vivo" nel badge dell'apertura */
@@ -354,10 +350,9 @@
   }
 }
 
-@keyframes sottolinea {
-  from {
-    transform: scaleX(0);
-    opacity: 0;
+@keyframes riflesso {
+  to {
+    background-position: 0 0;
   }
 }
 
@@ -436,7 +431,7 @@
     transition: none !important;
   }
 
-  .evidenza::after,
+  .evidenza,
   .anim-punto {
     animation: none !important;
   }
