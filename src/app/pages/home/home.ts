@@ -111,28 +111,24 @@ type Icona = 'scudo' | 'documento' | 'posizione' | 'garanzia';
         }
         <!-- card d'invito: completa la riga (3 servizi + questa = 4 colonne, 2x2 su tablet) -->
         <li class="rivela">
-          <div class="premi relative flex h-full flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-blue-900 to-blue-950 p-6 text-white shadow-sm">
-            <svg viewBox="0 0 64 64" class="pointer-events-none absolute -right-8 -bottom-10 size-40 opacity-10" aria-hidden="true">
-              <path d="M32 5 C32 5 12 27 12 40 A20 20 0 0 0 52 40 C52 27 32 5 32 5 Z" fill="#ffffff" />
-            </svg>
-            <span class="relative inline-flex size-12 items-center justify-center rounded-xl bg-white/10 text-orange-300" aria-hidden="true">
+          <!-- stessa card delle altre, con bordo tratteggiato: "per tutto il resto" senza stonare -->
+          <div class="premi group relative flex h-full flex-col rounded-2xl border-2 border-dashed border-slate-300 bg-white p-5 transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md sm:p-6">
+            <div class="flex items-center gap-4 sm:block">
+            <span class="inline-flex size-12 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700 ring-1 ring-slate-200 sm:mb-4" aria-hidden="true">
               <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <!-- fumetto con punto di domanda -->
                 <path d="M21 12a8.5 8.5 0 0 1-12.4 7.6L3.5 21l1.4-4.8A8.5 8.5 0 1 1 21 12z" />
                 <path d="M9.8 9.6a2.3 2.3 0 1 1 3.2 2.1c-.6.3-1 .8-1 1.4v.4M12 16.4h.01" />
               </svg>
             </span>
-            <h3 class="relative mt-4 text-lg font-bold">Hai un'esigenza diversa?</h3>
-            <p class="relative mt-2 flex-1 text-blue-100">
+            <h3 class="text-lg leading-snug font-bold text-slate-900">
+              <a routerLink="/contatti" class="after:absolute after:inset-0">Hai un'esigenza diversa?</a>
+            </h3>
+            </div>
+            <p class="mt-3 flex-1 text-slate-600 sm:mt-2">
               Manutenzione, riparazioni o un impianto su misura: raccontaci cosa ti serve.
             </p>
-            <a routerLink="/contatti"
-              class="pulsante relative mt-5 block rounded-lg bg-orange-700 px-4 py-2.5 text-center font-semibold hover:bg-orange-800">
-              Chiedi un preventivo <span class="freccia" aria-hidden="true">→</span>
-            </a>
-            <a routerLink="/catalogo" class="relative mt-3 text-center text-sm font-semibold text-blue-200 hover:text-white hover:underline">
-              oppure sfoglia il catalogo
-            </a>
+            <p class="mt-4 font-semibold text-orange-700 group-hover:underline" aria-hidden="true">Chiedi un preventivo →</p>
           </div>
         </li>
       </ul>
