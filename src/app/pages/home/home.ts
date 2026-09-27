@@ -2,7 +2,7 @@ import { Component, effect, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Servizio } from '../../core/servizi-api';
 import { Seo } from '../../core/seo';
-import { ANNI_ESPERIENZA, SITE } from '../../core/site.config';
+import { ANNI_ESPERIENZA, SITE, TELEFONO_LINK } from '../../core/site.config';
 import { aziendaJsonLd } from '../../core/structured-data';
 import { ComeLavoriamo } from '../../shared/come-lavoriamo';
 import { CtaContatti } from '../../shared/cta-contatti';
@@ -17,34 +17,60 @@ type Icona = 'scudo' | 'documento' | 'posizione' | 'garanzia';
     <!-- Apertura -->
     <section class="relative overflow-hidden bg-gradient-to-br from-blue-950 to-blue-900 text-white">
       <div class="griglia-punti pointer-events-none absolute inset-0" aria-hidden="true"></div>
-      <div class="relative mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:py-24 lg:grid-cols-[1fr_22rem]">
+      <!-- goccia del marchio in filigrana: su telefono sostituisce il simbolo animato (solo schermi grandi) -->
+      <svg viewBox="0 0 64 64" class="pointer-events-none absolute -right-16 bottom-24 size-72 opacity-[0.06] lg:hidden" aria-hidden="true">
+        <path d="M32 5 C32 5 12 27 12 40 A20 20 0 0 0 52 40 C52 27 32 5 32 5 Z" fill="#ffffff" />
+      </svg>
+      <div class="relative mx-auto grid max-w-6xl items-center gap-10 px-5 pt-10 pb-12 sm:px-4 md:py-24 lg:grid-cols-[1fr_22rem]">
         <div>
           <!-- ingresso alla prima apertura (classi intro-* in styles.css): il titolo resta visibile da subito -->
-          <p class="intro-voce font-semibold tracking-wide text-orange-300 uppercase">
-            Impiantistica a {{ site.indirizzo.citta }} dal {{ site.attivitaDal }}
+          <p class="intro-voce inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1.5 text-sm font-semibold text-orange-200 ring-1 ring-white/15">
+            <span class="relative flex size-2" aria-hidden="true">
+              <span class="anim-punto absolute inset-0 rounded-full bg-orange-400"></span>
+              <span class="relative size-2 rounded-full bg-orange-400"></span>
+            </span>
+            Dal {{ site.attivitaDal }} · {{ site.zonaServita }}
           </p>
-          <h1 class="intro-titolo mt-3 max-w-3xl text-4xl leading-tight font-bold md:text-5xl">
-            Caldaie, bagni e climatizzazione: installati a regola d'arte
+          <h1 class="intro-titolo mt-5 max-w-3xl text-[2.35rem] leading-[1.08] font-bold tracking-tight sm:text-5xl sm:leading-tight">
+            Caldaie, bagni e climatizzazione
+            <span class="evidenza">a regola d'arte</span>
           </h1>
-          <p class="intro-voce mt-5 max-w-2xl text-lg text-blue-100 [--ritardo:120ms]">
-            Da {{ anni }} anni {{ site.nome }} installa caldaie tradizionali e a condensazione, rinnova bagni e monta
-            condizionatori a {{ site.zonaServita }}.
+          <p class="intro-voce mt-5 max-w-xl text-[1.0625rem] leading-relaxed text-blue-100 sm:text-lg [--ritardo:120ms]">
+            Da {{ anni }} anni installiamo caldaie e condizionatori e rinnoviamo bagni a {{ site.zonaServita }}.
+            Un solo referente, dal sopralluogo alla certificazione.
           </p>
           <div class="intro-voce mt-8 flex flex-col gap-3 sm:flex-row [--ritardo:220ms]">
-            <a routerLink="/contatti" class="pulsante rounded-lg bg-orange-700 px-6 py-3 text-center font-semibold hover:bg-orange-800">
+            <a routerLink="/contatti"
+              class="pulsante rounded-xl bg-orange-700 px-6 py-4 text-center text-lg font-semibold shadow-lg shadow-orange-950/30 hover:bg-orange-800 sm:rounded-lg sm:py-3 sm:text-base">
               Richiedi un preventivo gratuito <span class="freccia" aria-hidden="true">→</span>
             </a>
-            <a routerLink="/servizi" class="pulsante rounded-lg border border-white/40 px-6 py-3 text-center font-semibold hover:bg-white/10">
+            <!-- su telefono chiamare è più utile che scorrere ai servizi (che sono subito sotto) -->
+            <a [href]="telefonoLink"
+              class="pulsante flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/5 px-6 py-3.5 font-semibold hover:bg-white/10 sm:hidden">
+              <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2" />
+              </svg>
+              Chiama ora
+            </a>
+            <a routerLink="/servizi" class="pulsante hidden rounded-lg border border-white/40 px-6 py-3 text-center font-semibold hover:bg-white/10 sm:block">
               Scopri i servizi
             </a>
           </div>
-          <ul class="intro-voce mt-8 grid grid-cols-2 gap-x-3 gap-y-2 text-sm text-blue-100 sm:flex sm:flex-row sm:flex-wrap sm:gap-x-6 [--ritardo:320ms]">
-            @for (voce of garanzie; track voce) {
-              <li class="flex items-start gap-2">
-                <svg class="size-5 shrink-0 text-orange-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.5 4.5L19 7.5" />
-                </svg>
-                {{ voce }}
+
+          <!-- garanzie: riquadro in vetro smerigliato, griglia 2x2 su telefono e 4 colonne da tablet in su -->
+          <ul class="intro-voce mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-white/10 ring-1 ring-white/15 backdrop-blur-sm sm:grid-cols-4 [--ritardo:320ms]">
+            @for (g of garanzie; track g.titolo) {
+              <li class="flex items-center gap-3 bg-blue-950/40 px-3.5 py-3.5">
+                <span class="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-orange-500/15 text-orange-300" aria-hidden="true">
+                  <svg class="size-[1.1rem]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path [attr.d]="g.icona" />
+                  </svg>
+                </span>
+                <span class="min-w-0 leading-tight">
+                  <span class="block text-sm font-bold text-white">{{ g.titolo }}</span>
+                  <span class="block text-xs text-blue-200">{{ g.sotto }}</span>
+                </span>
               </li>
             }
           </ul>
@@ -187,11 +213,14 @@ export default class Home {
 
   protected readonly anni = ANNI_ESPERIENZA;
 
+  protected readonly telefonoLink = TELEFONO_LINK;
+
+  /** Garanzie nell'apertura: parola forte + riga di spiegazione, con icona (viewBox 24x24). */
   protected readonly garanzie = [
-    `${ANNI_ESPERIENZA} anni di esperienza`,
-    'Sopralluogo gratuito',
-    'Impianti certificati',
-    'Aiuto con le detrazioni fiscali',
+    { titolo: `${ANNI_ESPERIENZA} anni`, sotto: 'di esperienza', icona: 'M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6l7-3zM9 12l2 2 4-4' },
+    { titolo: 'Sopralluogo', sotto: 'gratuito', icona: 'M3 11l9-7 9 7M5 10v10h14V10M10 20v-6h4v6' },
+    { titolo: 'Impianti', sotto: 'certificati', icona: 'M7 3h7l5 5v13H7zM14 3v5h5M10 14l2 2 4-4' },
+    { titolo: 'Detrazioni', sotto: 'ti aiutiamo noi', icona: 'M19 5L5 19M7.5 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM16.5 18a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z' },
   ];
 
   protected readonly puntiDiForza: { icona: Icona; titolo: string; testo: string }[] = [

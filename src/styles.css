@@ -180,6 +180,35 @@
     animation: onda-clic 0.6s ease-out forwards;
   }
 
+  /* parole evidenziate nel titolo della home: arancio con una sottolineatura "a mano" che si disegna */
+  .evidenza {
+    position: relative;
+    white-space: nowrap;
+    color: #fdba74;
+  }
+
+  .evidenza::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.12em;
+    height: 0.3em;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M2 9C40 3 90 2 198 6' fill='none' stroke='%23f97316' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")
+      no-repeat center / 100% 100%;
+    transform-origin: left center;
+    animation: sottolinea 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.45s both;
+  }
+
+  .intro-vista .evidenza::after {
+    animation: none;
+  }
+
+  /* puntino "vivo" nel badge dell'apertura */
+  .anim-punto {
+    animation: punto 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
   /* card e voci toccabili: si "premono" leggermente al tocco (sul telefono non c'è il passaggio del mouse) */
   .premi {
     transition: transform 0.15s ease;
@@ -325,6 +354,21 @@
   }
 }
 
+@keyframes sottolinea {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+}
+
+@keyframes punto {
+  75%,
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
 @keyframes onda-clic {
   to {
     transform: scale(1);
@@ -390,6 +434,11 @@
 
   details.faq::details-content {
     transition: none !important;
+  }
+
+  .evidenza::after,
+  .anim-punto {
+    animation: none !important;
   }
 
   .premi,
