@@ -94,9 +94,15 @@ type Icona = 'scudo' | 'documento' | 'posizione' | 'garanzia';
 
     <!-- Servizi -->
     <section class="mx-auto max-w-6xl px-4 py-12 md:py-20" aria-labelledby="titolo-servizi">
-      <p class="font-semibold tracking-wide text-orange-700 uppercase">Cosa facciamo</p>
-      <h2 id="titolo-servizi" class="mt-2 text-3xl font-bold text-blue-950 md:text-4xl">I nostri servizi</h2>
-      <p class="mt-3 max-w-2xl text-slate-600">Dal sopralluogo alla certificazione, seguiamo ogni lavoro dall'inizio alla fine.</p>
+      <!-- intestazione centrata su telefono, allineata a sinistra da tablet in su -->
+      <div class="text-center sm:text-left">
+        <p class="font-semibold tracking-wide text-orange-700 uppercase">Cosa facciamo</p>
+        <h2 id="titolo-servizi" class="mt-2 text-3xl font-bold text-blue-950 md:text-4xl">I nostri servizi</h2>
+        <span class="mx-auto mt-4 block h-1 w-12 rounded-full bg-orange-500 sm:mx-0" aria-hidden="true"></span>
+        <p class="mx-auto mt-4 max-w-md text-slate-600 sm:mx-0 sm:max-w-2xl">
+          Dal sopralluogo alla certificazione, seguiamo ogni lavoro dall'inizio alla fine.
+        </p>
+      </div>
       <ul class="mt-8 grid gap-4 sm:grid-cols-2 sm:gap-6 md:mt-10 lg:grid-cols-4">
         @for (servizio of servizi(); track servizio.slug) {
           <li class="rivela"><app-servizio-card [servizio]="servizio" /></li>
@@ -109,12 +115,16 @@ type Icona = 'scudo' | 'documento' | 'posizione' | 'garanzia';
     <!-- Perché sceglierci -->
     <section class="bg-slate-100" aria-labelledby="titolo-perche">
       <div class="mx-auto max-w-6xl px-4 py-12 md:py-20">
-        <p class="font-semibold tracking-wide text-orange-700 uppercase">Perché noi</p>
-        <h2 id="titolo-perche" class="mt-2 text-3xl font-bold text-blue-950 md:text-4xl">Perché scegliere {{ site.nome }}</h2>
-        <!-- su telefono: righe con l'icona a sinistra (più compatte); da tablet in su: card -->
+        <div class="text-center sm:text-left">
+          <p class="font-semibold tracking-wide text-orange-700 uppercase">Perché noi</p>
+          <h2 id="titolo-perche" class="mt-2 text-3xl font-bold text-blue-950 md:text-4xl">Perché scegliere {{ site.nome }}</h2>
+          <span class="mx-auto mt-4 block h-1 w-12 rounded-full bg-orange-500 sm:mx-0" aria-hidden="true"></span>
+        </div>
+        <!-- su telefono: icona e titolo sulla stessa riga, testo sotto a tutta larghezza; da tablet in su: card -->
         <ul class="mt-8 grid gap-3 sm:grid-cols-2 sm:gap-6 md:mt-10 lg:grid-cols-4">
           @for (punto of puntiDiForza; track punto.titolo) {
-            <li class="rivela flex gap-4 rounded-2xl bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-md sm:block sm:p-6">
+            <li class="rivela rounded-2xl bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md sm:p-6">
+              <div class="flex items-center gap-3 sm:block">
               <span class="inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-800 sm:size-12" aria-hidden="true">
                 <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                   @switch (punto.icona) {
@@ -133,10 +143,9 @@ type Icona = 'scudo' | 'documento' | 'posizione' | 'garanzia';
                   }
                 </svg>
               </span>
-              <div>
                 <h3 class="text-lg font-bold text-slate-900 sm:mt-4">{{ punto.titolo }}</h3>
-                <p class="mt-1 text-slate-600 sm:mt-2">{{ punto.testo }}</p>
               </div>
+              <p class="mt-2 text-slate-600">{{ punto.testo }}</p>
             </li>
           }
         </ul>

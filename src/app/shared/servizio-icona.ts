@@ -3,6 +3,17 @@ import { Component, computed, input } from '@angular/core';
 type Icona = 'fiamma' | 'goccia' | 'fiocco' | 'chiave';
 
 /**
+ * Colori dell'icona in base al tipo di servizio: arancio per il calore, blu per l'acqua,
+ * azzurro per il fresco. Classi complete (Tailwind le trova solo scritte per intero).
+ */
+export function tonoIcona(slug: string): string {
+  if (slug.includes('caldai')) return 'bg-orange-50 text-orange-700 ring-orange-100';
+  if (slug.includes('bagno')) return 'bg-blue-50 text-blue-700 ring-blue-100';
+  if (slug.includes('condizionator') || slug.includes('clima')) return 'bg-sky-50 text-sky-700 ring-sky-100';
+  return 'bg-slate-100 text-slate-700 ring-slate-200';
+}
+
+/**
  * Icona illustrativa di un servizio, scelta in base allo slug.
  * Segnaposto finché non ci sono le foto reali in WebP.
  */

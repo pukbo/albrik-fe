@@ -5,8 +5,11 @@ import { Component } from '@angular/core';
   selector: 'app-come-lavoriamo',
   template: `
     <section class="mx-auto max-w-6xl px-4 py-12 md:py-20" aria-labelledby="titolo-come">
-      <p class="font-semibold tracking-wide text-orange-700 uppercase">Semplice e trasparente</p>
-      <h2 id="titolo-come" class="mt-2 text-3xl font-bold text-blue-950 md:text-4xl">Come lavoriamo</h2>
+      <div class="text-center sm:text-left">
+        <p class="font-semibold tracking-wide text-orange-700 uppercase">Semplice e trasparente</p>
+        <h2 id="titolo-come" class="mt-2 text-3xl font-bold text-blue-950 md:text-4xl">Come lavoriamo</h2>
+        <span class="mx-auto mt-4 block h-1 w-12 rounded-full bg-orange-500 sm:mx-0" aria-hidden="true"></span>
+      </div>
       <!-- su telefono: linea del tempo verticale (numero a sinistra); da tablet in su: quattro colonne -->
       <ol class="mt-8 grid gap-6 md:mt-10 md:grid-cols-4 md:gap-8">
         @for (passo of passi; track passo.titolo; let i = $index, ultimo = $last) {
