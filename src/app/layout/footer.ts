@@ -17,10 +17,10 @@ import { Logo } from '../shared/logo';
         <path d="M32 5 C32 5 12 27 12 40 A20 20 0 0 0 52 40 C52 27 32 5 32 5 Z" fill="#ffffff" />
       </svg>
 
-      <div class="relative mx-auto grid max-w-6xl gap-10 px-4 pt-12 pb-8 md:grid-cols-3 md:gap-8 md:py-14">
+      <div class="relative mx-auto grid max-w-6xl gap-10 px-4 pt-12 pb-8 md:grid-cols-3 md:items-start md:gap-12 md:py-10">
         <!-- Marchio -->
         <div class="flex flex-col items-center text-center md:items-start md:text-left">
-          <app-logo [dimensione]="44" [scuro]="true" />
+          <app-logo [dimensione]="40" [scuro]="true" />
           <p class="mt-4 max-w-xs text-sm leading-relaxed text-blue-200">{{ site.descrizione }}</p>
           <p class="mt-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-orange-200">
             <span class="size-1.5 rounded-full bg-orange-400" aria-hidden="true"></span>
@@ -31,7 +31,8 @@ import { Logo } from '../shared/logo';
         <!-- Contatti: righe toccabili -->
         <address class="not-italic">
           <p class="titolo">Contatti</p>
-          <ul class="mt-3 divide-y divide-white/10 overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10">
+          <!-- telefono: riquadro a righe grandi da toccare; da tablet in su: righe semplici e compatte -->
+          <ul class="mt-3 divide-y divide-white/10 overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10 md:divide-y-0 md:rounded-none md:bg-transparent md:ring-0">
             <li>
               <a [href]="telefonoLink" class="riga">
                 <span class="icona" aria-hidden="true">
@@ -40,10 +41,10 @@ import { Logo } from '../shared/logo';
                   </svg>
                 </span>
                 <span class="min-w-0 flex-1">
-                  <span class="block text-xs text-blue-300">Telefono</span>
-                  <span class="block font-semibold text-white">{{ site.telefono }}</span>
+                  <span class="block text-xs text-blue-300 md:sr-only">Telefono</span>
+                  <span class="block font-semibold text-white md:text-sm md:font-medium md:text-blue-100">{{ site.telefono }}</span>
                 </span>
-                <span class="text-blue-300" aria-hidden="true">→</span>
+                <span class="text-blue-300 md:hidden" aria-hidden="true">→</span>
               </a>
             </li>
             <li>
@@ -54,10 +55,10 @@ import { Logo } from '../shared/logo';
                   </svg>
                 </span>
                 <span class="min-w-0 flex-1">
-                  <span class="block text-xs text-blue-300">Email</span>
-                  <span class="block font-semibold break-all text-white">{{ site.email }}</span>
+                  <span class="block text-xs text-blue-300 md:sr-only">Email</span>
+                  <span class="block font-semibold break-all text-white md:text-sm md:font-medium md:text-blue-100">{{ site.email }}</span>
                 </span>
-                <span class="text-blue-300" aria-hidden="true">→</span>
+                <span class="text-blue-300 md:hidden" aria-hidden="true">→</span>
               </a>
             </li>
             <li>
@@ -68,25 +69,24 @@ import { Logo } from '../shared/logo';
                   </svg>
                 </span>
                 <span class="min-w-0 flex-1">
-                  <span class="block text-xs text-blue-300">Sede<span class="sr-only"> (apre Google Maps in una nuova scheda)</span></span>
-                  <span class="block font-semibold text-white">
+                  <span class="block text-xs text-blue-300 md:sr-only">Sede<span class="sr-only"> (apre Google Maps in una nuova scheda)</span></span>
+                  <span class="block font-semibold text-white md:text-sm md:font-medium md:text-blue-100">
                     {{ site.indirizzo.via }}, {{ site.indirizzo.cap }} {{ site.indirizzo.citta }} ({{ site.indirizzo.provincia }})
                   </span>
                 </span>
-                <span class="text-blue-300" aria-hidden="true">↗</span>
+                <span class="text-blue-300 md:hidden" aria-hidden="true">↗</span>
               </a>
             </li>
           </ul>
         </address>
 
-        <!-- Link: pillole su telefono, elenco da tablet in su -->
-        <nav aria-label="Link utili">
+        <!-- Link: solo da tablet in su (su telefono ci sono già il menu e la barra in basso), su due colonne -->
+        <nav aria-label="Link utili" class="hidden md:block">
           <p class="titolo">Link utili</p>
-          <ul class="mt-3 grid grid-cols-2 gap-2 md:grid-cols-1 md:gap-0">
+          <ul class="mt-3 grid grid-cols-2 gap-x-6">
             @for (l of link; track l.path) {
               <li>
-                <a [routerLink]="l.path"
-                  class="premi flex min-h-11 items-center justify-center rounded-xl bg-white/5 px-3 text-center text-sm font-medium text-blue-100 ring-1 ring-white/10 hover:bg-white/10 hover:text-white md:min-h-9 md:justify-start md:rounded-lg md:bg-transparent md:px-0 md:text-left md:ring-0 md:hover:bg-transparent md:hover:underline">
+                <a [routerLink]="l.path" class="flex min-h-9 items-center text-sm text-blue-100 hover:text-white hover:underline">
                   {{ l.etichetta }}
                 </a>
               </li>
@@ -96,9 +96,10 @@ import { Logo } from '../shared/logo';
       </div>
 
       <div class="relative border-t border-white/10">
-        <p class="mx-auto max-w-6xl px-4 py-5 text-center text-xs text-blue-300 md:text-left">
-          © {{ anno }} {{ site.nome }} · Impiantistica a {{ site.zonaServita }}
-        </p>
+        <div class="mx-auto flex max-w-6xl flex-col items-center gap-2 px-4 py-5 text-xs text-blue-300 md:flex-row md:justify-between">
+          <p>© {{ anno }} {{ site.nome }} · Impiantistica a {{ site.zonaServita }}</p>
+          <a routerLink="/privacy" class="inline-flex min-h-11 items-center hover:text-white hover:underline md:min-h-0">Privacy</a>
+        </div>
       </div>
     </footer>
   `,
@@ -138,9 +139,27 @@ import { Logo } from '../shared/logo';
       color: #fdba74;
     }
 
+    /* da tablet in su: righe compatte, senza riquadro */
     @media (min-width: 768px) {
       .titolo {
         text-align: left;
+      }
+
+      .riga {
+        gap: 0.75rem;
+        min-height: 2.25rem;
+        padding: 0.25rem 0;
+      }
+
+      .riga:hover,
+      .riga:active {
+        background: transparent;
+        color: white;
+      }
+
+      .icona {
+        width: 1.75rem;
+        height: 1.75rem;
       }
     }
   `,
@@ -153,12 +172,13 @@ export class Footer {
   protected readonly mappa =
     'https://www.google.com/maps/search/?api=1&query=' +
     encodeURIComponent(`${SITE.nome}, ${SITE.indirizzo.via}, ${SITE.indirizzo.cap} ${SITE.indirizzo.citta}`);
+  /** Sei link su due colonne da tre (la Privacy è nella riga in fondo). */
   protected readonly link = [
-    { path: '/servizi', etichetta: 'I nostri servizi' },
+    { path: '/', etichetta: 'Home' },
     { path: '/catalogo', etichetta: 'Catalogo' },
+    { path: '/servizi', etichetta: 'I nostri servizi' },
     { path: '/caldaie', etichetta: 'Caldaie' },
-    { path: '/condizionatori', etichetta: 'Condizionatori' },
     { path: '/contatti', etichetta: 'Preventivo gratuito' },
-    { path: '/privacy', etichetta: 'Privacy' },
+    { path: '/condizionatori', etichetta: 'Condizionatori' },
   ];
 }
