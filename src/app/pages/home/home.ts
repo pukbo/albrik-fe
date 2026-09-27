@@ -15,7 +15,8 @@ type Icona = 'scudo' | 'documento' | 'posizione' | 'garanzia';
   template: `
     <!-- Apertura -->
     <section class="relative overflow-hidden bg-gradient-to-br from-blue-950 to-blue-900 text-white">
-      <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:py-24 lg:grid-cols-[1fr_22rem]">
+      <div class="griglia-punti pointer-events-none absolute inset-0" aria-hidden="true"></div>
+      <div class="relative mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:py-24 lg:grid-cols-[1fr_22rem]">
         <div>
           <p class="font-semibold tracking-wide text-orange-300 uppercase">
             Impiantistica a {{ site.indirizzo.citta }} dal {{ site.attivitaDal }}
@@ -48,16 +49,33 @@ type Icona = 'scudo' | 'documento' | 'posizione' | 'garanzia';
         </div>
 
         <!-- Elemento grafico del marchio (solo schermi grandi: sui telefoni conta la velocità) -->
+        <!-- Animazioni in CSS (styles.css): onde, orbite, goccia che galleggia, fiamma che tremola.
+             Tutto fermo con "riduci movimento" attivo nel sistema operativo. -->
         <div class="relative hidden aspect-square lg:block" aria-hidden="true">
+          <!-- onde d'acqua che si allargano -->
+          <div class="anim-onda absolute inset-10 rounded-full border border-blue-300/40"></div>
+          <div class="anim-onda absolute inset-10 rounded-full border border-blue-300/40 [animation-delay:-1.6s]"></div>
+          <div class="anim-onda absolute inset-10 rounded-full border border-blue-300/40 [animation-delay:-3.2s]"></div>
+
+          <!-- orbite con i punti luminosi -->
           <div class="absolute inset-0 rounded-full border border-white/10"></div>
+          <div class="anim-orbita absolute inset-0">
+            <span class="absolute top-0 left-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-400 shadow-[0_0_14px_4px_rgba(251,146,60,0.6)]"></span>
+          </div>
           <div class="absolute inset-8 rounded-full border border-white/10"></div>
+          <div class="anim-orbita-inversa absolute inset-8">
+            <span class="absolute bottom-0 left-1/2 size-2 -translate-x-1/2 translate-y-1/2 rounded-full bg-blue-300 shadow-[0_0_12px_3px_rgba(147,197,253,0.6)]"></span>
+          </div>
           <div class="absolute inset-16 rounded-full bg-white/5"></div>
-          <svg viewBox="0 0 64 64" class="absolute inset-0 m-auto size-44">
+
+          <!-- simbolo: la goccia galleggia, la fiamma tremola -->
+          <svg viewBox="0 0 64 64" class="anim-galleggia absolute inset-0 m-auto size-44 drop-shadow-[0_10px_30px_rgba(59,130,246,0.45)]">
             <path d="M32 5 C32 5 12 27 12 40 A20 20 0 0 0 52 40 C52 27 32 5 32 5 Z" fill="#3b82f6" />
-            <path d="M32 24 C34 30 42 33 42 42 A10 10 0 0 1 22 42 C22 37 25 34 27 32 C27 36 29 38 31 38 C29 33 30 28 32 24 Z" fill="#fb923c" />
+            <path class="anim-fiamma" d="M32 24 C34 30 42 33 42 42 A10 10 0 0 1 22 42 C22 37 25 34 27 32 C27 36 29 38 31 38 C29 33 30 28 32 24 Z" fill="#fb923c" />
           </svg>
+
           <!-- sigillo esperienza (decorativo: la stessa informazione è nel testo) -->
-          <div class="absolute right-2 bottom-6 flex size-28 flex-col items-center justify-center rounded-full bg-orange-700 text-center shadow-lg ring-4 ring-blue-950">
+          <div class="anim-sigillo absolute right-2 bottom-6 flex size-28 flex-col items-center justify-center rounded-full bg-orange-700 text-center ring-4 ring-blue-950">
             <span class="font-display text-4xl leading-none font-bold">{{ anni }}</span>
             <span class="mt-1 text-xs leading-tight font-semibold uppercase">anni di<br />esperienza</span>
           </div>
@@ -72,7 +90,7 @@ type Icona = 'scudo' | 'documento' | 'posizione' | 'garanzia';
       <p class="mt-3 max-w-2xl text-slate-600">Dal sopralluogo alla certificazione, seguiamo ogni lavoro dall'inizio alla fine.</p>
       <ul class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         @for (servizio of servizi(); track servizio.slug) {
-          <li><app-servizio-card [servizio]="servizio" /></li>
+          <li class="rivela"><app-servizio-card [servizio]="servizio" /></li>
         } @empty {
           <li class="text-slate-600">Servizi momentaneamente non disponibili.</li>
         }
@@ -86,7 +104,7 @@ type Icona = 'scudo' | 'documento' | 'posizione' | 'garanzia';
         <h2 id="titolo-perche" class="mt-2 text-3xl font-bold text-blue-950 md:text-4xl">Perché scegliere {{ site.nome }}</h2>
         <ul class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           @for (punto of puntiDiForza; track punto.titolo) {
-            <li class="rounded-2xl bg-white p-6 shadow-sm">
+            <li class="rivela rounded-2xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
               <span class="inline-flex size-12 items-center justify-center rounded-xl bg-blue-50 text-blue-800" aria-hidden="true">
                 <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                   @switch (punto.icona) {
@@ -119,7 +137,7 @@ type Icona = 'scudo' | 'documento' | 'posizione' | 'garanzia';
       <h2 id="titolo-come" class="mt-2 text-3xl font-bold text-blue-950 md:text-4xl">Come lavoriamo</h2>
       <ol class="mt-10 grid gap-8 md:grid-cols-4">
         @for (passo of passi; track passo.titolo; let i = $index, ultimo = $last) {
-          <li class="relative">
+          <li class="rivela relative">
             <!-- linea di collegamento tra i passi (solo su schermi larghi) -->
             @if (!ultimo) {
               <span class="absolute top-6 left-14 hidden h-0.5 w-[calc(100%-3rem)] bg-slate-200 md:block" aria-hidden="true"></span>

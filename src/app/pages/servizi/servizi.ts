@@ -19,7 +19,7 @@ import { ServizioCard } from '../../shared/servizio-card';
     <section class="mx-auto max-w-6xl px-4 py-12 md:py-16" aria-label="Elenco dei servizi">
       <ul class="grid gap-6 sm:grid-cols-2">
         @for (servizio of servizi(); track servizio.slug) {
-          <li><app-servizio-card [servizio]="servizio" /></li>
+          <li class="rivela"><app-servizio-card [servizio]="servizio" /></li>
         } @empty {
           <li class="text-slate-600">Servizi momentaneamente non disponibili.</li>
         }
