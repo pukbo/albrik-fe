@@ -15,6 +15,8 @@ import { AdminAuth } from '../admin-auth';
           <nav aria-label="Menu pannello">
             <a routerLink="/admin/richieste" routerLinkActive="bg-white/15" ariaCurrentWhenActive="page"
               class="rounded-md px-3 py-1.5 text-sm font-medium hover:bg-white/10">Richieste</a>
+            <a routerLink="/admin/servizi" routerLinkActive="bg-white/15" ariaCurrentWhenActive="page"
+              class="rounded-md px-3 py-1.5 text-sm font-medium hover:bg-white/10">Servizi</a>
           </nav>
         </div>
         <div class="flex items-center gap-3 text-sm">

@@ -42,6 +42,9 @@ export const routes: Routes = [
       { path: 'richieste', loadComponent: () => import('./admin/pagine/richieste') },
       { path: 'richieste/:id', loadComponent: () => import('./admin/pagine/richiesta') },
       { path: 'preventivi/:id', loadComponent: () => import('./admin/pagine/preventivo') },
+      { path: 'servizi', loadComponent: () => import('./admin/pagine/servizi') },
+      { path: 'servizi/nuovo', loadComponent: () => import('./admin/pagine/servizio') },
+      { path: 'servizi/:id', loadComponent: () => import('./admin/pagine/servizio') },
     ],
   },
 

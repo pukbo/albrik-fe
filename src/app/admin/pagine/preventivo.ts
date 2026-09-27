@@ -1,10 +1,10 @@
 import { DatePipe } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, input, linkedSignal, numberAttribute, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { AdminApi, DatiPreventivo, EmailPreventivo, Preventivo, RigaPreventivo } from '../admin-api';
+import { messaggiErrore } from '../errori';
 import { calcolaTotali, euro, importoRiga } from '../totali';
 
 type CampoTesto = Exclude<keyof DatiPreventivo, 'righe' | 'validitaGiorni'>;
@@ -37,21 +37,6 @@ function datiDi(p: Preventivo): DatiPreventivo {
       aliquotaIva: r.aliquotaIva,
     })),
   };
-}
-
-/** Messaggi leggibili dagli errori del backend ({errori: {campo: msg}} o {errore: msg}). */
-function messaggiErrore(e: unknown): string[] {
-  if (e instanceof HttpErrorResponse) {
-    const corpo = e.error as { errori?: Record<string, string>; errore?: string } | null;
-    if (corpo?.errori) {
-      return Object.entries(corpo.errori).map(([campo, msg]) => {
-        const riga = /^righe\[(\d+)\]\.(\w+)$/.exec(campo);
-        return riga ? `Riga ${Number(riga[1]) + 1}: ${msg}` : msg;
-      });
-    }
-    if (corpo?.errore) return [corpo.errore];
-  }
-  return ['Operazione non riuscita. Riprova.'];
 }
 
 @Component({
@@ -123,13 +108,13 @@ function messaggiErrore(e: unknown): string[] {
             <p class="mt-1 text-sm text-slate-600">Il PDF n. {{ p.numero }} verrà allegato all'email.</p>
             <label for="email-a" class="mt-4 block text-sm font-medium text-slate-700">Destinatario</label>
             <input id="email-a" type="email" [class]="campo" [value]="m.destinatario"
-              (input)="email.set({ ...m, destinatario: testo($event) })" />
+              (input)="modificaEmail({ destinatario: testo($event) })" />
             <label for="email-oggetto" class="mt-3 block text-sm font-medium text-slate-700">Oggetto</label>
             <input id="email-oggetto" type="text" [class]="campo" [value]="m.oggetto"
-              (input)="email.set({ ...m, oggetto: testo($event) })" />
+              (input)="modificaEmail({ oggetto: testo($event) })" />
             <label for="email-testo" class="mt-3 block text-sm font-medium text-slate-700">Messaggio</label>
             <textarea id="email-testo" rows="9" [class]="campo" [value]="m.messaggio"
-              (input)="email.set({ ...m, messaggio: testo($event) })"></textarea>
+              (input)="modificaEmail({ messaggio: testo($event) })"></textarea>
             <div class="mt-4 flex flex-wrap justify-end gap-2">
               <button type="button" (click)="email.set(null)" [class]="bottoneSecondario">Annulla</button>
               <button type="button" (click)="invia()" [disabled]="occupato()"
@@ -178,7 +163,7 @@ function messaggiErrore(e: unknown): string[] {
               <div>
                 <label for="validita" class="text-sm font-medium text-slate-700">Validità (giorni) *</label>
                 <input id="validita" type="number" min="1" max="365" [class]="campo" [value]="b.validitaGiorni"
-                  (input)="bozza.set({ ...b, validitaGiorni: numero($event) ?? 0 })" />
+                  (input)="imposta({ validitaGiorni: numero($event) ?? 0 })" />
               </div>
             </div>
           </section>
@@ -322,8 +307,20 @@ export default class AdminPreventivo {
     return (event.target as HTMLInputElement).value === '' || Number.isNaN(valore) ? null : valore;
   }
 
+  /**
+   * Applica le modifiche all'ultimo valore della bozza. Non usare mai la variabile del template (b):
+   * è la copia dell'ultimo rendering e sovrascriverebbe le modifiche fatte nel frattempo.
+   */
+  protected imposta(modifica: Partial<DatiPreventivo>): void {
+    this.bozza.update((b) => (b ? { ...b, ...modifica } : b));
+  }
+
   protected aggiorna(campo: CampoTesto, valore: string): void {
-    this.bozza.update((b) => (b ? { ...b, [campo]: valore } : b));
+    this.imposta({ [campo]: valore });
+  }
+
+  protected modificaEmail(modifica: Partial<EmailPreventivo>): void {
+    this.email.update((m) => (m ? { ...m, ...modifica } : m));
   }
 
   protected aggiornaRiga(indice: number, modifica: Partial<RigaPreventivo>): void {

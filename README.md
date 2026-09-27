@@ -28,7 +28,7 @@ necessari perché Angular invii il token CSRF.
 | `src/app/core/seo.ts`             | Title, meta description, canonical e JSON-LD per ogni pagina    |
 | `src/app/core/structured-data.ts` | JSON-LD Schema.org (`HVACBusiness`, `Service`)                  |
 | `src/app/pages/`                  | Home, elenco servizi, dettaglio servizio, contatti, privacy, 404 |
-| `src/app/admin/`                  | Pannello admin (solo nel browser, niente SSR): login, richieste, editor preventivi |
+| `src/app/admin/`                  | Pannello admin (solo nel browser, niente SSR): login, richieste, preventivi, servizi |
 | `src/server.ts`                   | Server Node/Express per l'SSR, espone anche `/sitemap.xml`      |
 | `src/environments/`               | URL delle API in sviluppo e in produzione                       |
 

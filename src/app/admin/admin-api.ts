@@ -105,6 +105,24 @@ export interface EmailPreventivo {
   messaggio: string;
 }
 
+/** Campi modificabili di un servizio (corpo di POST/PUT). */
+export interface DatiServizio {
+  slug: string;
+  titolo: string;
+  sommario: string;
+  descrizione: string;
+  metaTitle: string;
+  metaDescription: string;
+  immagine: string | null;
+  ordine: number;
+  attivo: boolean;
+}
+
+export interface ServizioAdmin extends DatiServizio {
+  id: number;
+  ultimaModifica: string;
+}
+
 export interface ConfigurazionePreventivi {
   aliquoteIva: number[];
   aliquotaPredefinita: number;
@@ -148,6 +166,24 @@ export class AdminApi {
 
   aggiorna(id: number, modifica: { stato?: StatoRichiesta; noteInterne?: string }): Observable<RichiestaAdmin> {
     return this.http.patch<RichiestaAdmin>(`${BASE}/richieste/${id}`, modifica);
+  }
+
+  // --- Servizi ---
+
+  servizi(): Observable<ServizioAdmin[]> {
+    return this.http.get<ServizioAdmin[]>(`${BASE}/servizi`);
+  }
+
+  servizio(id: number): Observable<ServizioAdmin> {
+    return this.http.get<ServizioAdmin>(`${BASE}/servizi/${id}`);
+  }
+
+  creaServizio(dati: DatiServizio): Observable<ServizioAdmin> {
+    return this.http.post<ServizioAdmin>(`${BASE}/servizi`, dati);
+  }
+
+  aggiornaServizio(id: number, dati: DatiServizio): Observable<ServizioAdmin> {
+    return this.http.put<ServizioAdmin>(`${BASE}/servizi/${id}`, dati);
   }
 
   // --- Preventivi ---
