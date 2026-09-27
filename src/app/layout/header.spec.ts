@@ -59,6 +59,9 @@ describe('Header', () => {
     expect(catalogo.getAttribute('aria-expanded')).toBe('true');
     expect(sezione.hasAttribute('inert')).toBe(false);
     expect(sezione.querySelector('a[href="/caldaie"]')).not.toBeNull();
+    // azione principale del pannello: il preventivo
+    expect(pannello.querySelector('a[href="/contatti"]')?.textContent).toContain('Contatti');
+    expect([...pannello.querySelectorAll('a')].some((a) => a.textContent!.includes('Richiedi un preventivo gratuito'))).toBe(true);
 
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     await fixture.whenStable();

@@ -204,8 +204,17 @@ interface GruppoMenu {
         </ul>
 
         <div class="voce mt-8 space-y-3" [style.--i]="3">
+          <!-- azione principale: il preventivo (nella pagina di un servizio parte con quel servizio già scelto) -->
+          <a routerLink="/contatti" [queryParams]="parametriPreventivo()" (click)="chiudiMenu(false)"
+            class="pulsante flex items-center justify-center gap-2 rounded-xl bg-orange-700 py-4 text-lg font-semibold text-white">
+            <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" aria-hidden="true">
+              <path d="M7 3h7l5 5v13H7z" /><path d="M14 3v5h5" /><path d="M10 13h6M10 17h4" />
+            </svg>
+            Richiedi un preventivo gratuito
+          </a>
           <a [href]="telefonoLink"
-            class="pulsante flex items-center justify-center gap-2 rounded-xl bg-orange-700 py-3.5 font-semibold text-white">
+            class="pulsante flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/5 py-3.5 font-semibold text-white active:bg-white/10">
             <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
               stroke-linejoin="round" aria-hidden="true">
               <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2" />
@@ -213,14 +222,14 @@ interface GruppoMenu {
             Chiama ora · {{ site.telefono }}
           </a>
           <a [href]="'mailto:' + site.email"
-            class="flex items-center justify-center gap-2 rounded-xl border border-white/20 py-3.5 font-semibold text-blue-100 active:bg-white/10">
-            <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            class="flex min-h-11 items-center justify-center gap-2 text-sm font-medium text-blue-200 active:text-white">
+            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
               stroke-linejoin="round" aria-hidden="true">
               <rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" />
             </svg>
             {{ site.email }}
           </a>
-          <p class="pt-2 text-center text-sm text-blue-300">Impiantistica a {{ site.zonaServita }} dal {{ site.attivitaDal }}</p>
+          <p class="text-center text-sm text-blue-300">Impiantistica a {{ site.zonaServita }} dal {{ site.attivitaDal }}</p>
         </div>
       </nav>
     </div>
@@ -484,6 +493,12 @@ export class Header {
       prefissi: ['/catalogo', ...Object.values(CATEGORIE).map((c) => `/${c.percorso}`)],
     },
   ]);
+
+  /** Nella pagina di un servizio il modulo preventivo si apre con quel servizio già scelto. */
+  protected readonly parametriPreventivo = computed(() => {
+    const servizio = /^\/servizi\/([a-z0-9-]+)$/.exec(this.url().split(/[?#]/)[0])?.[1];
+    return servizio ? { servizio } : {};
+  });
 
   protected attivo(gruppo: GruppoMenu): boolean {
     const percorso = this.url().split(/[?#]/)[0];
