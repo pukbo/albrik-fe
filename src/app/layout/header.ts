@@ -51,9 +51,10 @@ interface GruppoMenu {
           <app-logo [dimensione]="36" />
         </a>
 
+        <!-- order-last: il menu (sempre nell'HTML per le animazioni) non deve spingere il pulsante verso il centro -->
         <button
           type="button"
-          class="inline-flex size-11 items-center justify-center rounded-lg text-slate-700 hover:bg-slate-100 md:hidden"
+          class="order-last -mr-2 inline-flex size-11 items-center justify-center rounded-lg text-slate-700 hover:bg-slate-100 md:hidden"
           [attr.aria-expanded]="aperto()"
           aria-controls="menu-principale"
           (click)="aperto.set(!aperto())"
