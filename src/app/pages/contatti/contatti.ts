@@ -17,11 +17,11 @@ import { ModuloPreventivo } from '../../shared/modulo-preventivo';
     />
     <section class="mx-auto max-w-6xl px-4 py-12 md:py-16" aria-label="Modulo e recapiti">
       <div class="grid gap-10 lg:grid-cols-3">
-        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-8 lg:col-span-2">
+        <div class="entra rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-8 lg:col-span-2">
           <app-modulo-preventivo [servizi]="servizi()" [servizioIniziale]="servizio()" />
         </div>
 
-        <aside class="space-y-4" aria-label="Recapiti">
+        <aside class="entra space-y-4 [animation-delay:150ms]" aria-label="Recapiti">
           <a [href]="telefonoLink" class="flex gap-4 rounded-2xl border border-slate-200 p-6 hover:border-blue-300 hover:bg-blue-50">
             <span class="inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-800" aria-hidden="true">
               <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">

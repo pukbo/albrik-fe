@@ -29,10 +29,10 @@ type Icona = 'scudo' | 'documento' | 'posizione' | 'garanzia';
             condizionatori a {{ site.zonaServita }}.
           </p>
           <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-            <a routerLink="/contatti" class="rounded-lg bg-orange-700 px-6 py-3 text-center font-semibold hover:bg-orange-800">
-              Richiedi un preventivo gratuito
+            <a routerLink="/contatti" class="pulsante rounded-lg bg-orange-700 px-6 py-3 text-center font-semibold hover:bg-orange-800">
+              Richiedi un preventivo gratuito <span class="freccia" aria-hidden="true">→</span>
             </a>
-            <a routerLink="/servizi" class="rounded-lg border border-white/40 px-6 py-3 text-center font-semibold hover:bg-white/10">
+            <a routerLink="/servizi" class="pulsante rounded-lg border border-white/40 px-6 py-3 text-center font-semibold hover:bg-white/10">
               Scopri i servizi
             </a>
           </div>

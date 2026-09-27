@@ -107,7 +107,7 @@ const INPUT =
         }
 
         <button type="submit" [disabled]="f().submitting()"
-          class="w-full rounded-lg bg-orange-700 px-6 py-3 font-semibold text-white hover:bg-orange-800 disabled:opacity-60 sm:w-auto">
+          class="pulsante w-full rounded-lg bg-orange-700 px-6 py-3 font-semibold text-white hover:bg-orange-800 disabled:opacity-60 sm:w-auto">
           {{ f().submitting() ? 'Invio in corso…' : 'Invia richiesta' }}
         </button>
       </form>

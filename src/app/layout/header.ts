@@ -7,7 +7,7 @@ import { Logo } from '../shared/logo';
   selector: 'app-header',
   imports: [RouterLink, RouterLinkActive, Logo],
   template: `
-    <header class="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
+    <header class="testata-sito sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
       <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <a routerLink="/" [attr.aria-label]="site.nome + ', torna alla home'" (click)="chiudi()">
           <app-logo [dimensione]="36" />
@@ -51,7 +51,7 @@ import { Logo } from '../shared/logo';
             <li>
               <a
                 [href]="telefonoLink"
-                class="mt-2 block rounded-lg bg-orange-700 px-4 py-3 text-center font-semibold text-white hover:bg-orange-800 md:mt-0 md:ml-2 md:py-2"
+                class="pulsante mt-2 block rounded-lg bg-orange-700 px-4 py-3 text-center font-semibold text-white hover:bg-orange-800 md:mt-0 md:ml-2 md:py-2"
               >
                 Chiama ora
               </a>

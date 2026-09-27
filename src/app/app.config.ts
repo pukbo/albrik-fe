@@ -1,7 +1,7 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
+import { provideRouter, withComponentInputBinding, withInMemoryScrolling, withViewTransitions } from '@angular/router';
 import { adminSessioneScadutaInterceptor } from './admin/admin-auth';
 import { routes } from './app.routes';
 
@@ -13,6 +13,8 @@ export const appConfig: ApplicationConfig = {
       // parametri, query param e dati dei resolver arrivano ai componenti come input()
       withComponentInputBinding(),
       withInMemoryScrolling({ scrollPositionRestoration: 'top' }),
+      // passaggio animato tra le pagine (stile in styles.css); i browser senza supporto cambiano pagina normalmente
+      withViewTransitions({ skipInitialTransition: true }),
     ),
     // la protezione CSRF (cookie XSRF-TOKEN -> header X-XSRF-TOKEN) è attiva di default in HttpClient
     provideHttpClient(withFetch(), withInterceptors([adminSessioneScadutaInterceptor])),

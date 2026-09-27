@@ -21,11 +21,11 @@ import { SITE, TELEFONO_LINK } from '../core/site.config';
           <a
             routerLink="/contatti"
             [queryParams]="servizioSlug() ? { servizio: servizioSlug() } : {}"
-            class="rounded-lg bg-orange-700 px-6 py-3 font-semibold hover:bg-orange-800"
+            class="pulsante rounded-lg bg-orange-700 px-6 py-3 font-semibold hover:bg-orange-800"
           >
-            Richiedi un preventivo online
+            Richiedi un preventivo online <span class="freccia" aria-hidden="true">→</span>
           </a>
-          <a [href]="telefonoLink" class="rounded-lg border border-white/40 px-6 py-3 font-semibold hover:bg-white/10">
+          <a [href]="telefonoLink" class="pulsante rounded-lg border border-white/40 px-6 py-3 font-semibold hover:bg-white/10">
             Chiama {{ site.telefono }}
           </a>
         </div>

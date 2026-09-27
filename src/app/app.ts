@@ -1,7 +1,8 @@
-import { Component, DOCUMENT, inject } from '@angular/core';
+import { Component, DOCUMENT, afterNextRender, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
+import { attivaOndaAlClic } from './core/onda-clic';
 import { Footer } from './layout/footer';
 import { Header } from './layout/header';
 
@@ -29,6 +30,12 @@ const inAreaAdmin = (url: string | undefined) => !!url && (url === '/admin' || u
 })
 export class App {
   private readonly router = inject(Router);
+
+  constructor() {
+    const documento = inject(DOCUMENT);
+    // solo nel browser: sul server non ci sono clic
+    afterNextRender(() => attivaOndaAlClic(documento));
+  }
 
   protected readonly areaAdmin = toSignal(
     this.router.events.pipe(
