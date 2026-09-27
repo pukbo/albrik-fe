@@ -21,6 +21,8 @@ import { AdminAuth } from '../admin-auth';
               class="rounded-md px-3 py-1.5 text-sm font-medium hover:bg-white/10">Richieste</a>
             <a routerLink="/admin/servizi" routerLinkActive="bg-white/15" ariaCurrentWhenActive="page"
               class="rounded-md px-3 py-1.5 text-sm font-medium hover:bg-white/10">Servizi</a>
+            <a routerLink="/admin/catalogo" routerLinkActive="bg-white/15" ariaCurrentWhenActive="page"
+              class="rounded-md px-3 py-1.5 text-sm font-medium hover:bg-white/10">Catalogo</a>
             <a routerLink="/admin/statistiche" routerLinkActive="bg-white/15" ariaCurrentWhenActive="page"
               class="rounded-md px-3 py-1.5 text-sm font-medium hover:bg-white/10">Statistiche</a>
           </nav>

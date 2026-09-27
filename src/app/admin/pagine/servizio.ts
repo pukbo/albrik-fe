@@ -3,6 +3,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom, of } from 'rxjs';
 import { fotoServizio } from '../../core/immagini';
+import { CATEGORIE, CategoriaProdotto } from '../../core/prodotti-api';
 import { SITE } from '../../core/site.config';
 import { AdminApi, DatiServizio, ServizioAdmin } from '../admin-api';
 import { messaggiErrore } from '../errori';
@@ -24,6 +25,7 @@ const VUOTO: DatiServizio = {
   descrizione: '',
   metaTitle: '',
   metaDescription: '',
+  categoriaProdotti: null,
   ordine: 10,
   attivo: false,
 };
@@ -116,8 +118,8 @@ export function creaSlug(testo: string): string {
                 </div>
                 @if (slugCambiato()) {
                   <p class="mt-1 text-sm text-amber-800">
-                    Attenzione: cambiando lo slug cambia l'indirizzo della pagina. I link già indicizzati da Google e quelli
-                    condivisi smetteranno di funzionare.
+                    Cambiando lo slug cambia l'indirizzo della pagina. Il vecchio indirizzo verrà reindirizzato
+                    automaticamente (redirect 301), ma Google impiegherà qualche settimana ad aggiornarsi: cambialo solo se serve.
                   </p>
                 }
               </div>
@@ -151,6 +153,18 @@ export function creaSlug(testo: string): string {
             <input id="ordine" type="number" min="0" max="9999" [class]="campo" [value]="b.ordine"
               (input)="imposta({ ordine: +testo($event) || 0 })" />
             <p class="mt-1 text-xs text-slate-500">I numeri più bassi vengono mostrati per primi.</p>
+
+            <label for="catalogo" class="mt-4 block text-sm font-medium text-slate-700">Catalogo collegato</label>
+            <select id="catalogo" [class]="campo" (change)="impostaCatalogo(testo($event))">
+              <option value="" [selected]="!b.categoriaProdotti">Nessuno</option>
+              @for (c of categorie; track c.valore) {
+                <option [value]="c.valore" [selected]="b.categoriaProdotti === c.valore">{{ c.etichetta }}</option>
+              }
+            </select>
+            <p class="mt-1 text-xs text-slate-500">
+              Se scegli un catalogo, nel modulo contatti il cliente potrà indicare il modello (o dire che ce l'ha già)
+              e la pagina del servizio mostrerà alcuni modelli.
+            </p>
           </section>
 
           <section class="rounded-2xl bg-white p-6 shadow-sm" aria-labelledby="titolo-foto">
@@ -206,6 +220,7 @@ export default class AdminServizio {
   protected readonly metaTitleIdeale = META_TITLE_IDEALE;
   protected readonly metaDescriptionIdeale = META_DESCRIPTION_IDEALE;
   protected readonly dominio = SITE.url.replace(/^https?:\/\//, '');
+  protected readonly categorie = Object.entries(CATEGORIE).map(([valore, c]) => ({ valore, etichetta: c.plurale }));
 
   protected readonly nuovo = computed(() => this.id() === undefined);
 
@@ -296,6 +311,10 @@ export default class AdminServizio {
 
   protected aggiorna(campo: CampoTesto, valore: string): void {
     this.imposta({ [campo]: valore });
+  }
+
+  protected impostaCatalogo(valore: string): void {
+    this.imposta({ categoriaProdotti: (valore || null) as CategoriaProdotto | null });
   }
 
   protected aggiornaTitolo(titolo: string): void {

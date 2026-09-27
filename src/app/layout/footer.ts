@@ -30,6 +30,7 @@ import { Logo } from '../shared/logo';
           <p class="font-semibold text-white">Link utili</p>
           <ul class="mt-2 space-y-1 text-sm">
             <li><a routerLink="/servizi" class="hover:text-white hover:underline">I nostri servizi</a></li>
+            <li><a routerLink="/caldaie" class="hover:text-white hover:underline">Catalogo caldaie</a></li>
             <li><a routerLink="/contatti" class="hover:text-white hover:underline">Richiedi un preventivo</a></li>
             <li><a routerLink="/privacy" class="hover:text-white hover:underline">Privacy</a></li>
           </ul>

@@ -18,7 +18,7 @@ import { ModuloPreventivo } from '../../shared/modulo-preventivo';
     <section class="mx-auto max-w-6xl px-4 py-12 md:py-16" aria-label="Modulo e recapiti">
       <div class="grid gap-10 lg:grid-cols-3">
         <div class="entra rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-8 lg:col-span-2">
-          <app-modulo-preventivo [servizi]="servizi()" [servizioIniziale]="servizio()" />
+          <app-modulo-preventivo [servizi]="servizi()" [servizioIniziale]="servizio()" [prodottoIniziale]="prodotto()" />
         </div>
 
         <aside class="entra space-y-4 [animation-delay:150ms]" aria-label="Recapiti">
@@ -72,6 +72,8 @@ export default class Contatti {
   readonly servizi = input<Servizio[]>([]);
   /** Query param ?servizio=slug per preselezionare il servizio nel modulo. */
   readonly servizio = input<string>();
+  /** Query param ?prodotto=slug per preselezionare il modello del catalogo. */
+  readonly prodotto = input<string>();
 
   protected readonly site = SITE;
   protected readonly anni = ANNI_ESPERIENZA;

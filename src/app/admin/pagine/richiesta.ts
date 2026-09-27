@@ -35,6 +35,21 @@ import { euro } from '../totali';
               </dd></div>
               <div><dt class="text-slate-500">Comune</dt><dd>{{ r.comune ?? '–' }}</dd></div>
               <div><dt class="text-slate-500">Servizio</dt><dd>{{ r.servizioTitolo ?? 'Non indicato' }}</dd></div>
+              @if (r.prodottoSlug || r.prodottoDelCliente !== null) {
+                <div class="sm:col-span-2"><dt class="text-slate-500">Modello</dt><dd>
+                  @if (r.prodottoSlug) {
+                    @if (r.prodottoPercorso) {
+                      <a [href]="r.prodottoPercorso" target="_blank" rel="noopener" class="font-semibold text-blue-800 hover:underline">{{ r.prodottoNome }} ↗</a>
+                    } @else {
+                      {{ r.prodottoSlug }} <span class="text-slate-500">(non più nel catalogo)</span>
+                    }
+                  } @else if (r.prodottoDelCliente) {
+                    Il cliente ha già il prodotto
+                  } @else {
+                    Da consigliare
+                  }
+                </dd></div>
+              }
             </dl>
           </div>
           <div class="rounded-2xl bg-white p-6 shadow-sm">

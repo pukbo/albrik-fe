@@ -69,6 +69,7 @@ export class Header {
   protected readonly voci = [
     { path: '/', label: 'Home' },
     { path: '/servizi', label: 'Servizi' },
+    { path: '/caldaie', label: 'Caldaie' },
     { path: '/contatti', label: 'Contatti' },
   ];
 

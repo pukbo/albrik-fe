@@ -31,6 +31,30 @@ app.get('/sitemap.xml', async (_req, res) => {
 });
 
 /**
+ * Redirect 301 per le pagine spostate (slug cambiato dal pannello, pagine accorpate):
+ * Google trasferisce il posizionamento al nuovo indirizzo. L'elenco è nel backend.
+ */
+const PAGINE_CON_REDIRECT = /^\/(servizi|caldaie|condizionatori)\/[a-z0-9-]+\/?$/;
+
+app.get(PAGINE_CON_REDIRECT, async (req, res, next) => {
+  try {
+    const percorso = req.path.replace(/\/$/, '');
+    const risposta = await fetch(`${environment.apiUrl}/redirect?percorso=${encodeURIComponent(percorso)}`, {
+      signal: AbortSignal.timeout(2000),
+    });
+    if (risposta.ok) {
+      const { percorso: nuovo } = (await risposta.json()) as { percorso: string };
+      const query = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
+      res.redirect(301, nuovo + query);
+      return;
+    }
+  } catch {
+    // backend irraggiungibile: si prosegue con la pagina normale (che mostrerà il suo 404)
+  }
+  next();
+});
+
+/**
  * Serve static files from /browser
  */
 app.use(

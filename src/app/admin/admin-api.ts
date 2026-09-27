@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { CategoriaProdotto, Prodotto } from '../core/prodotti-api';
 
 /*
  * Le API admin usano URL relativi (/api/admin/...): in sviluppo passano dal proxy di ng serve,
@@ -19,6 +20,12 @@ export interface RichiestaAdmin {
   comune: string | null;
   servizioSlug: string | null;
   servizioTitolo: string | null;
+  /** Modello scelto dal catalogo nel modulo contatti. */
+  prodottoSlug: string | null;
+  prodottoNome: string | null;
+  prodottoPercorso: string | null;
+  /** true = il cliente ha già il prodotto; null = scelta non prevista o "consigliatemi voi". */
+  prodottoDelCliente: boolean | null;
   messaggio: string;
   stato: StatoRichiesta;
   noteInterne: string | null;
@@ -117,8 +124,38 @@ export interface DatiServizio {
   descrizione: string;
   metaTitle: string;
   metaDescription: string;
+  /** Catalogo collegato: nel modulo contatti il cliente può sceglierne un modello. */
+  categoriaProdotti: CategoriaProdotto | null;
   ordine: number;
   attivo: boolean;
+}
+
+/** Campi modificabili di un prodotto del catalogo (corpo di POST/PUT). */
+export interface DatiProdotto {
+  categoria: CategoriaProdotto;
+  slug: string;
+  marca: string;
+  modello: string;
+  sommario: string;
+  descrizione: string;
+  potenzaKw: number | null;
+  classeEnergetica: string | null;
+  efficienza: number;
+  smart: number;
+  silenziosita: number;
+  fasciaPrezzo: number;
+  metaTitle: string;
+  metaDescription: string;
+  ordine: number;
+  attivo: boolean;
+}
+
+/** Prodotto come restituito dal pannello: dati pubblici più id, stato e ordine. */
+export interface ProdottoAdmin {
+  id: number;
+  attivo: boolean;
+  ordine: number;
+  dati: Prodotto;
 }
 
 export interface ServizioAdmin extends DatiServizio {
@@ -220,6 +257,34 @@ export class AdminApi {
 
   eliminaImmagine(id: number): Observable<ServizioAdmin> {
     return this.http.delete<ServizioAdmin>(`${BASE}/servizi/${id}/immagine`);
+  }
+
+  // --- Catalogo prodotti ---
+
+  prodotti(): Observable<ProdottoAdmin[]> {
+    return this.http.get<ProdottoAdmin[]>(`${BASE}/prodotti`);
+  }
+
+  prodotto(id: number): Observable<ProdottoAdmin> {
+    return this.http.get<ProdottoAdmin>(`${BASE}/prodotti/${id}`);
+  }
+
+  creaProdotto(dati: DatiProdotto): Observable<ProdottoAdmin> {
+    return this.http.post<ProdottoAdmin>(`${BASE}/prodotti`, dati);
+  }
+
+  aggiornaProdotto(id: number, dati: DatiProdotto): Observable<ProdottoAdmin> {
+    return this.http.put<ProdottoAdmin>(`${BASE}/prodotti/${id}`, dati);
+  }
+
+  caricaImmagineProdotto(id: number, file: File): Observable<ProdottoAdmin> {
+    const dati = new FormData();
+    dati.append('file', file);
+    return this.http.post<ProdottoAdmin>(`${BASE}/prodotti/${id}/immagine`, dati);
+  }
+
+  eliminaImmagineProdotto(id: number): Observable<ProdottoAdmin> {
+    return this.http.delete<ProdottoAdmin>(`${BASE}/prodotti/${id}/immagine`);
   }
 
   // --- Preventivi ---

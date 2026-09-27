@@ -1,3 +1,4 @@
+import { CATEGORIE, Prodotto } from './prodotti-api';
 import { Servizio } from './servizi-api';
 import { SITE } from './site.config';
 
@@ -32,6 +33,52 @@ export function aziendaJsonLd(servizi: Servizio[] = []): object {
         itemOffered: { '@type': 'Service', name: s.titolo, url: `${SITE.url}/servizi/${s.slug}` },
       })),
     }),
+  };
+}
+
+/** JSON-LD di un modello del catalogo, con le briciole di pane per i risultati di Google. */
+export function prodottoJsonLd(prodotto: Prodotto): object[] {
+  const categoria = CATEGORIE[prodotto.categoria];
+  return [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: prodotto.nome,
+      brand: { '@type': 'Brand', name: prodotto.marca },
+      model: prodotto.modello,
+      category: categoria.plurale,
+      description: prodotto.metaDescription,
+      url: SITE.url + prodotto.percorso,
+      ...(prodotto.immagine && { image: SITE.url + prodotto.immagine }),
+      ...(prodotto.classeEnergetica && {
+        additionalProperty: { '@type': 'PropertyValue', name: 'Classe energetica', value: prodotto.classeEnergetica },
+      }),
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url + '/' },
+        { '@type': 'ListItem', position: 2, name: categoria.plurale, item: `${SITE.url}/${categoria.percorso}` },
+        { '@type': 'ListItem', position: 3, name: prodotto.nome, item: SITE.url + prodotto.percorso },
+      ],
+    },
+  ];
+}
+
+/** JSON-LD dell'elenco dei modelli di una categoria. */
+export function catalogoJsonLd(prodotti: Prodotto[], nome: string, percorso: string): object {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: nome,
+    url: SITE.url + percorso,
+    itemListElement: prodotti.map((p, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: p.nome,
+      url: SITE.url + p.percorso,
+    })),
   };
 }
 

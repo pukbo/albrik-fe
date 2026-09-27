@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { CategoriaProdotto } from './prodotti-api';
 
 /** Servizio offerto da Albrik, come restituito dal backend (ServizioDto). */
 export interface Servizio {
@@ -12,6 +13,8 @@ export interface Servizio {
   metaTitle: string;
   metaDescription: string;
   immagine: string | null;
+  /** Catalogo collegato (es. CALDAIA): nel modulo contatti si può scegliere il modello. */
+  categoriaProdotti: CategoriaProdotto | null;
   ultimaModifica: string | null;
 }
 

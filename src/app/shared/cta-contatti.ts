@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SITE, TELEFONO_LINK } from '../core/site.config';
 
@@ -20,7 +20,7 @@ import { SITE, TELEFONO_LINK } from '../core/site.config';
         <div class="relative mt-6 flex flex-col justify-center gap-3 sm:flex-row">
           <a
             routerLink="/contatti"
-            [queryParams]="servizioSlug() ? { servizio: servizioSlug() } : {}"
+            [queryParams]="parametri()"
             class="pulsante rounded-lg bg-orange-700 px-6 py-3 font-semibold hover:bg-orange-800"
           >
             Richiedi un preventivo online <span class="freccia" aria-hidden="true">→</span>
@@ -36,6 +36,13 @@ import { SITE, TELEFONO_LINK } from '../core/site.config';
 export class CtaContatti {
   /** Se valorizzato, il modulo contatti si apre con questo servizio già selezionato. */
   readonly servizioSlug = input<string>();
+  /** Modello del catalogo da preselezionare nel modulo (insieme al servizio). */
+  readonly prodottoSlug = input<string>();
+
+  protected readonly parametri = computed(() => ({
+    ...(this.servizioSlug() && { servizio: this.servizioSlug() }),
+    ...(this.prodottoSlug() && { prodotto: this.prodottoSlug() }),
+  }));
 
   protected readonly site = SITE;
   protected readonly telefonoLink = TELEFONO_LINK;

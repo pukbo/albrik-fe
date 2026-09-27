@@ -1,13 +1,25 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, input, linkedSignal, signal } from '@angular/core';
+import { Component, computed, inject, input, linkedSignal, signal } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { FormField, email, form, maxLength, pattern, required, submit, validate } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
+import { CATEGORIE, ProdottiApi } from '../core/prodotti-api';
 import { NuovaRichiesta, RichiesteApi } from '../core/richieste-api';
 import { Servizio } from '../core/servizi-api';
 import { SITE, TELEFONO_LINK } from '../core/site.config';
+import { SchedaTecnica } from './scheda-tecnica';
 
 type Stato = 'compilazione' | 'inviata' | 'errore' | 'troppe';
+
+/** Per i servizi con un catalogo: modello scelto, prodotto già del cliente o consiglio di Albrik. */
+type SceltaProdotto = 'catalogo' | 'mio' | 'consiglio';
+
+/** Dati del modulo: quelli della richiesta, più la scelta del prodotto che decide cosa inviare. */
+type DatiModulo = Omit<NuovaRichiesta, 'prodottoSlug' | 'prodottoDelCliente'> & {
+  sceltaProdotto: SceltaProdotto;
+  prodottoSlug: string;
+};
 
 const INPUT =
   'mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 ' +
@@ -16,7 +28,7 @@ const INPUT =
 
 @Component({
   selector: 'app-modulo-preventivo',
-  imports: [FormField, RouterLink],
+  imports: [FormField, RouterLink, SchedaTecnica],
   template: `
     @if (stato() === 'inviata') {
       <div role="status" class="rounded-2xl border border-green-200 bg-green-50 p-6">
@@ -66,6 +78,48 @@ const INPUT =
             }
           </select>
         </div>
+
+        <!-- servizio con catalogo (es. caldaie): il modulo si espande per la scelta del modello -->
+        @if (categoria(); as cat) {
+          <fieldset class="entra rounded-2xl border border-blue-200 bg-blue-50/60 p-5">
+            <legend class="px-1 font-medium text-slate-800">Quale {{ nomeCategoria().singolare }} vuoi installare?</legend>
+            <div class="mt-1 grid gap-2 sm:grid-cols-3">
+              @for (o of opzioni(); track o.valore) {
+                <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-800 has-checked:border-blue-700 has-checked:ring-2 has-checked:ring-blue-200">
+                  <input type="radio" [value]="o.valore" [formField]="f.sceltaProdotto"
+                    class="size-4 shrink-0 accent-blue-800" />
+                  {{ o.etichetta }}
+                </label>
+              }
+            </div>
+
+            @if (modello().sceltaProdotto === 'catalogo') {
+              <div class="mt-4">
+                <label for="prodotto" class="font-medium text-slate-800">Modello *</label>
+                <select id="prodotto" [formField]="f.prodottoSlug" [class]="input"
+                  [attr.aria-invalid]="mostraErrore(f.prodottoSlug) || null" aria-describedby="prodotto-errore">
+                  <option value="">{{ prodotti.isLoading() ? 'Caricamento…' : 'Scegli un modello' }}</option>
+                  @for (p of prodotti.value(); track p.slug) {
+                    <option [value]="p.slug">{{ p.nome }}</option>
+                  }
+                </select>
+                <p id="prodotto-errore" class="mt-1 text-sm text-red-700">{{ errore(f.prodottoSlug) }}</p>
+                <p class="text-sm text-slate-600">
+                  Non sai quale scegliere?
+                  <a [routerLink]="'/' + nomeCategoria().percorso" target="_blank" class="font-medium text-blue-800 underline">
+                    Confronta i modelli<span class="sr-only"> (si apre in una nuova scheda)</span></a>.
+                </p>
+                @if (prodottoScelto(); as p) {
+                  <app-scheda-tecnica class="mt-4 block max-w-sm" [prodotto]="p" [compatta]="true" />
+                }
+              </div>
+            } @else if (modello().sceltaProdotto === 'mio') {
+              <p class="mt-4 text-sm text-slate-700">
+                Perfetto: nel messaggio indicaci marca e modello, così verifichiamo la compatibilità con il tuo impianto.
+              </p>
+            }
+          </fieldset>
+        }
 
         <div>
           <label for="messaggio" class="font-medium text-slate-800">Messaggio *</label>
@@ -119,24 +173,39 @@ export class ModuloPreventivo {
   readonly servizi = input<Servizio[]>([]);
   /** Slug del servizio da preselezionare (es. arrivando dalla pagina di un servizio). */
   readonly servizioIniziale = input<string | undefined>();
+  /** Slug del modello da preselezionare (es. arrivando dalla scheda di una caldaia). */
+  readonly prodottoIniziale = input<string | undefined>();
 
   private readonly api = inject(RichiesteApi);
+  private readonly prodottiApi = inject(ProdottiApi);
 
   protected readonly site = SITE;
   protected readonly telefonoLink = TELEFONO_LINK;
   protected readonly input = INPUT;
   protected readonly stato = signal<Stato>('compilazione');
 
-  protected readonly modello = linkedSignal<NuovaRichiesta>(() => ({
-    nome: '',
-    email: '',
-    telefono: '',
-    comune: '',
-    servizioSlug: this.servizioIniziale() ?? '',
-    messaggio: '',
-    consensoPrivacy: false,
-    sito: '',
-  }));
+  protected readonly modello = linkedSignal<DatiModulo>(() => this.datiIniziali());
+
+  /** Catalogo collegato al servizio selezionato (es. CALDAIA per l'installazione caldaie). */
+  protected readonly categoria = computed(
+    () => this.servizi().find((s) => s.slug === this.modello().servizioSlug)?.categoriaProdotti ?? null,
+  );
+  protected readonly nomeCategoria = computed(() => CATEGORIE[this.categoria() ?? 'CALDAIA']);
+  protected readonly opzioni = computed(() => [
+    { valore: 'catalogo', etichetta: 'Voglio sceglierne una' },
+    { valore: 'mio', etichetta: `Ho già ${this.nomeCategoria().conArticolo}` },
+    { valore: 'consiglio', etichetta: 'Consigliatemi voi' },
+  ]);
+
+  /** Modelli del catalogo, caricati solo quando il servizio scelto ne ha uno. */
+  protected readonly prodotti = rxResource({
+    params: () => this.categoria() ?? undefined,
+    stream: ({ params }) => (params ? this.prodottiApi.elenco(params) : of([])),
+    defaultValue: [],
+  });
+  protected readonly prodottoScelto = computed(() =>
+    this.prodotti.value().find((p) => p.slug === this.modello().prodottoSlug),
+  );
 
   // Stesse regole della validazione del backend (NuovaRichiestaDto)
   protected readonly f = form(this.modello, (p) => {
@@ -146,6 +215,10 @@ export class ModuloPreventivo {
     email(p.email, { message: 'Email non valida' });
     pattern(p.telefono, /^$|^[+0-9 ./-]{6,30}$/, { message: 'Numero di telefono non valido' });
     maxLength(p.comune, 100, { message: 'Massimo 100 caratteri' });
+    required(p.prodottoSlug, {
+      message: 'Scegli un modello',
+      when: ({ valueOf }) => this.categoria() !== null && valueOf(p.sceltaProdotto) === 'catalogo',
+    });
     required(p.messaggio, { message: 'Scrivi un messaggio' });
     maxLength(p.messaggio, 2000, { message: 'Massimo 2000 caratteri' });
     validate(p.consensoPrivacy, ({ value }) =>
@@ -153,12 +226,12 @@ export class ModuloPreventivo {
     );
   });
 
-  protected mostraErrore(campo: (typeof this.f)[keyof NuovaRichiesta]): boolean {
+  protected mostraErrore(campo: (typeof this.f)[keyof DatiModulo]): boolean {
     const stato = campo();
     return stato.touched() && stato.invalid();
   }
 
-  protected errore(campo: (typeof this.f)[keyof NuovaRichiesta]): string {
+  protected errore(campo: (typeof this.f)[keyof DatiModulo]): string {
     return this.mostraErrore(campo) ? (campo().errors()[0]?.message ?? 'Campo non valido') : '';
   }
 
@@ -167,7 +240,7 @@ export class ModuloPreventivo {
     await submit(this.f, {
       action: async () => {
         try {
-          await firstValueFrom(this.api.invia(this.modello()));
+          await firstValueFrom(this.api.invia(this.richiesta()));
           this.stato.set('inviata');
         } catch (e) {
           this.stato.set(e instanceof HttpErrorResponse && e.status === 429 ? 'troppe' : 'errore');
@@ -180,16 +253,33 @@ export class ModuloPreventivo {
   }
 
   protected nuovaRichiesta(): void {
-    this.f().reset({
+    this.f().reset({ ...this.datiIniziali(), servizioSlug: '', sceltaProdotto: 'catalogo', prodottoSlug: '' });
+    this.stato.set('compilazione');
+  }
+
+  /** Dati da inviare: la scelta del prodotto conta solo se il servizio ha un catalogo. */
+  private richiesta(): NuovaRichiesta {
+    const { sceltaProdotto, prodottoSlug, ...dati } = this.modello();
+    const conCatalogo = this.categoria() !== null;
+    return {
+      ...dati,
+      prodottoSlug: conCatalogo && sceltaProdotto === 'catalogo' ? prodottoSlug : null,
+      prodottoDelCliente: !conCatalogo || sceltaProdotto === 'consiglio' ? null : sceltaProdotto === 'mio',
+    };
+  }
+
+  private datiIniziali(): DatiModulo {
+    return {
       nome: '',
       email: '',
       telefono: '',
       comune: '',
-      servizioSlug: '',
+      servizioSlug: this.servizioIniziale() ?? '',
+      sceltaProdotto: 'catalogo',
+      prodottoSlug: this.prodottoIniziale() ?? '',
       messaggio: '',
       consensoPrivacy: false,
       sito: '',
-    });
-    this.stato.set('compilazione');
+    };
   }
 }

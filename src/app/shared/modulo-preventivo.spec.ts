@@ -64,4 +64,83 @@ describe('ModuloPreventivo', () => {
 
     expect(el.querySelector('[role="status"]')?.textContent).toContain('Richiesta inviata');
   });
+
+  describe('servizio con catalogo', () => {
+    const servizi = [
+      { slug: 'installazione-caldaie-caserta', titolo: 'Installazione caldaie', categoriaProdotti: 'CALDAIA' },
+      { slug: 'rinnovo-bagno-caserta', titolo: 'Rinnovo bagno', categoriaProdotti: null },
+    ];
+    const caldaia = {
+      slug: 'demo-eco-24',
+      nome: 'Termika Eco 24',
+      categoria: 'CALDAIA',
+      valutazioni: { efficienza: 4, smart: 2, silenziosita: 3, fasciaPrezzo: 2, livello: 3 },
+    };
+
+    function compilaObbligatori(el: HTMLElement, compila: (id: string, v: string) => void) {
+      compila('nome', 'Mario Rossi');
+      compila('email', 'mario@example.com');
+      compila('messaggio', 'Vorrei cambiare la caldaia');
+      el.querySelector<HTMLInputElement>('#consenso')!.click();
+    }
+
+    it('si espande, carica i modelli e invia quello scelto', async () => {
+      const { fixture, el, compila } = crea();
+      fixture.componentRef.setInput('servizi', servizi);
+      fixture.componentRef.setInput('servizioIniziale', 'installazione-caldaie-caserta');
+      fixture.componentRef.setInput('prodottoIniziale', 'demo-eco-24');
+      // la richiesta dei modelli resta in sospeso finché non risponde: niente whenStable prima del flush
+      fixture.detectChanges();
+
+      http.expectOne((r) => r.url.endsWith('/prodotti') && r.params.get('categoria') === 'CALDAIA').flush([caldaia]);
+      await fixture.whenStable();
+      expect(el.querySelector('#prodotto option[value="demo-eco-24"]')).not.toBeNull();
+      // anteprima della scheda del modello preselezionato
+      expect(el.textContent).toContain('Scheda tecnica');
+
+      compilaObbligatori(el, compila);
+      el.querySelector('form')!.dispatchEvent(new Event('submit'));
+      await fixture.whenStable();
+
+      const req = http.expectOne((r) => r.url.endsWith('/richieste'));
+      expect(req.request.body).toMatchObject({ prodottoSlug: 'demo-eco-24', prodottoDelCliente: false });
+      expect(req.request.body.sceltaProdotto).toBeUndefined();
+    });
+
+    it('"Ho già la caldaia" invia prodottoDelCliente senza modello', async () => {
+      const { fixture, el, compila } = crea();
+      fixture.componentRef.setInput('servizi', servizi);
+      fixture.componentRef.setInput('servizioIniziale', 'installazione-caldaie-caserta');
+      fixture.detectChanges();
+      http.expectOne((r) => r.url.endsWith('/prodotti')).flush([caldaia]);
+      await fixture.whenStable();
+
+      const mio = [...el.querySelectorAll<HTMLInputElement>('input[type="radio"]')].find((r) => r.value === 'mio')!;
+      mio.click();
+      await fixture.whenStable();
+      expect(el.querySelector('#prodotto')).toBeNull();
+
+      compilaObbligatori(el, compila);
+      el.querySelector('form')!.dispatchEvent(new Event('submit'));
+      await fixture.whenStable();
+
+      const req = http.expectOne((r) => r.url.endsWith('/richieste'));
+      expect(req.request.body).toMatchObject({ prodottoSlug: null, prodottoDelCliente: true });
+    });
+
+    it('senza catalogo non mostra la scelta e non invia dati di prodotto', async () => {
+      const { fixture, el, compila } = crea();
+      fixture.componentRef.setInput('servizi', servizi);
+      fixture.componentRef.setInput('servizioIniziale', 'rinnovo-bagno-caserta');
+      await fixture.whenStable();
+
+      expect(el.querySelector('fieldset')).toBeNull();
+      compilaObbligatori(el, compila);
+      el.querySelector('form')!.dispatchEvent(new Event('submit'));
+      await fixture.whenStable();
+
+      const req = http.expectOne((r) => r.url.endsWith('/richieste'));
+      expect(req.request.body).toMatchObject({ prodottoSlug: null, prodottoDelCliente: null });
+    });
+  });
 });

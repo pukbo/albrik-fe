@@ -10,6 +10,10 @@ export interface NuovaRichiesta {
   telefono: string;
   comune: string;
   servizioSlug: string;
+  /** Modello scelto dal catalogo (solo per i servizi con un catalogo collegato, es. caldaie). */
+  prodottoSlug: string | null;
+  /** true = il cliente ha già il prodotto; null = scelta non prevista o "consigliatemi voi". */
+  prodottoDelCliente: boolean | null;
   messaggio: string;
   consensoPrivacy: boolean;
   /** Honeypot anti-spam: deve restare vuoto. */
