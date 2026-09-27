@@ -11,6 +11,7 @@ import { ANNI_ESPERIENZA, SITE, TELEFONO_LINK } from '../../core/site.config';
 import { ComeLavoriamo } from '../../shared/come-lavoriamo';
 import { CAROSELLO, ELEMENTO_CAROSELLO } from '../../shared/carosello';
 import { CtaContatti } from '../../shared/cta-contatti';
+import { ElencoFaq } from '../../shared/elenco-faq';
 import { IntestazionePagina } from '../../shared/intestazione-pagina';
 import { ProdottoCard } from '../../shared/prodotto-card';
 import { ServizioIcona } from '../../shared/servizio-icona';
@@ -23,7 +24,7 @@ import NotFound from '../not-found/not-found';
  */
 @Component({
   selector: 'app-servizio',
-  imports: [RouterLink, ServizioIcona, CtaContatti, NotFound, IntestazionePagina, ProdottoCard, ComeLavoriamo],
+  imports: [RouterLink, ServizioIcona, CtaContatti, NotFound, IntestazionePagina, ProdottoCard, ComeLavoriamo, ElencoFaq],
   template: `
     @if (servizio(); as s) {
       <article>
@@ -135,20 +136,7 @@ import NotFound from '../not-found/not-found';
             <div class="mx-auto max-w-3xl px-4">
               <p class="font-semibold tracking-wide text-orange-700 uppercase">Domande frequenti</p>
               <h2 id="titolo-faq" class="mt-2 text-2xl font-bold text-slate-900 md:text-3xl">Hai dei dubbi? Ecco le risposte</h2>
-              <!-- <details>: si apre senza JavaScript e le risposte sono comunque nell'HTML per Google -->
-              <div class="mt-8 space-y-3">
-                @for (f of s.faq; track $index; let primo = $first) {
-                  <details class="faq group rounded-2xl border border-slate-200 bg-white shadow-sm open:shadow-md" [open]="primo">
-                    <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-5 font-semibold text-slate-900">
-                      {{ f.domanda }}
-                      <span class="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-800 transition-transform group-open:rotate-45" aria-hidden="true">
-                        <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg>
-                      </span>
-                    </summary>
-                    <p class="px-5 pb-5 leading-relaxed text-slate-700">{{ f.risposta }}</p>
-                  </details>
-                }
-              </div>
+              <app-elenco-faq class="mt-8 block" [faq]="s.faq" [apriPrima]="true" />
               <p class="mt-8 text-slate-600">
                 Non trovi la risposta?
                 <a routerLink="/contatti" [queryParams]="{ servizio: s.slug }" class="font-semibold text-blue-800 underline">Scrivici</a>
@@ -161,18 +149,6 @@ import NotFound from '../not-found/not-found';
       <app-cta-contatti class="mt-12 block" [servizioSlug]="s.slug" />
     } @else {
       <app-not-found />
-    }
-  `,
-  styles: `
-    /* niente triangolino nativo del <summary> (Safari lo mostra anche con list-style: none) */
-    .faq summary::-webkit-details-marker {
-      display: none;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .faq summary span {
-        transition: none;
-      }
     }
   `,
 })

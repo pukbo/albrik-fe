@@ -56,6 +56,11 @@ export const routes: Routes = [
     resolve: { servizi: serviziResolver },
   },
   {
+    path: 'faq',
+    loadComponent: () => import('./pages/faq/faq'),
+    resolve: { servizi: serviziResolver },
+  },
+  {
     path: 'privacy',
     loadComponent: () => import('./pages/privacy/privacy'),
   },

@@ -83,10 +83,11 @@ import { Logo } from '../shared/logo';
         <!-- Link: solo da tablet in su (su telefono ci sono già il menu e la barra in basso), su due colonne -->
         <nav aria-label="Link utili" class="hidden md:block">
           <p class="titolo">Link utili</p>
-          <ul class="mt-3 grid grid-cols-2 gap-x-6">
+          <ul class="mt-3">
             @for (l of link; track l.path) {
               <li>
-                <a [routerLink]="l.path" class="flex min-h-9 items-center text-sm text-blue-100 hover:text-white hover:underline">
+                <!-- stessa altezza delle righe dei contatti (min-h-9): le colonne si allineano -->
+                <a [routerLink]="l.path" class="flex min-h-9 items-center py-1 text-sm font-medium text-blue-100 hover:text-white hover:underline">
                   {{ l.etichetta }}
                 </a>
               </li>
@@ -172,13 +173,10 @@ export class Footer {
   protected readonly mappa =
     'https://www.google.com/maps/search/?api=1&query=' +
     encodeURIComponent(`${SITE.nome}, ${SITE.indirizzo.via}, ${SITE.indirizzo.cap} ${SITE.indirizzo.citta}`);
-  /** Sei link su due colonne da tre (la Privacy è nella riga in fondo). */
+  /** Tre link, come le tre righe dei contatti: colonne simmetriche (la Privacy è nella riga in fondo). */
   protected readonly link = [
-    { path: '/', etichetta: 'Home' },
-    { path: '/catalogo', etichetta: 'Catalogo' },
     { path: '/servizi', etichetta: 'I nostri servizi' },
-    { path: '/caldaie', etichetta: 'Caldaie' },
-    { path: '/contatti', etichetta: 'Preventivo gratuito' },
-    { path: '/condizionatori', etichetta: 'Condizionatori' },
+    { path: '/catalogo', etichetta: 'Catalogo' },
+    { path: '/faq', etichetta: 'Domande frequenti' },
   ];
 }

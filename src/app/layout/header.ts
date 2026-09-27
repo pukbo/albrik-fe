@@ -196,6 +196,12 @@ interface GruppoMenu {
             </li>
           }
           <li class="voce border-b border-white/10" [style.--i]="2">
+            <a routerLink="/faq" (click)="chiudiMenu(false)" routerLinkActive="text-orange-300" ariaCurrentWhenActive="page"
+              class="flex items-center justify-between py-5 font-display text-lg font-bold tracking-wider uppercase">
+              Domande frequenti <span class="text-xl font-normal" aria-hidden="true">→</span>
+            </a>
+          </li>
+          <li class="voce border-b border-white/10" [style.--i]="3">
             <a routerLink="/contatti" (click)="chiudiMenu(false)" routerLinkActive="text-orange-300" ariaCurrentWhenActive="page"
               class="flex items-center justify-between py-5 font-display text-lg font-bold tracking-wider uppercase">
               Contatti <span class="text-xl font-normal" aria-hidden="true">→</span>
@@ -203,7 +209,7 @@ interface GruppoMenu {
           </li>
         </ul>
 
-        <div class="voce mt-8 space-y-3" [style.--i]="3">
+        <div class="voce mt-8 space-y-3" [style.--i]="4">
           <!-- azione principale: il preventivo (nella pagina di un servizio parte con quel servizio già scelto) -->
           <a routerLink="/contatti" [queryParams]="parametriPreventivo()" (click)="chiudiMenu(false)"
             class="pulsante flex items-center justify-center gap-2 rounded-xl bg-orange-700 py-4 text-lg font-semibold text-white">
