@@ -37,11 +37,14 @@ interface GruppoMenu {
   selector: 'app-header',
   imports: [RouterLink, RouterLinkActive, Logo, ServizioIcona],
   host: {
+    // sticky sull'elemento host: un <header> sticky dentro <app-header> resterebbe confinato
+    // nel suo contenitore (alto quanto lui) e scorrerebbe via con la pagina
+    class: 'sticky top-0 z-40 block',
     '(document:keydown.escape)': 'chiudiSezione()',
     '(document:click)': 'clicFuori($event)',
   },
   template: `
-    <header class="testata-sito sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
+    <header class="testata-sito border-b border-slate-200 bg-white/95 backdrop-blur">
       <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <a routerLink="/" [attr.aria-label]="site.nome + ', torna alla home'" (click)="chiudiSezione(); aperto.set(false)">
           <app-logo [dimensione]="36" />
