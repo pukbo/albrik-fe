@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom, of } from 'rxjs';
 import { fotoServizio } from '../../core/immagini';
 import { CATEGORIE, CategoriaProdotto } from '../../core/prodotti-api';
+import { Faq } from '../../core/servizi-api';
 import { SITE } from '../../core/site.config';
 import { AdminApi, DatiServizio, ServizioAdmin } from '../admin-api';
 import { messaggiErrore } from '../errori';
@@ -26,6 +27,9 @@ const VUOTO: DatiServizio = {
   metaTitle: '',
   metaDescription: '',
   categoriaProdotti: null,
+  puntiChiave: [],
+  incluso: [],
+  faq: [],
   ordine: 10,
   attivo: false,
 };
@@ -104,6 +108,68 @@ export function creaSlug(testo: string): string {
                 </p>
               </div>
             </div>
+          </section>
+
+          <section class="rounded-2xl bg-white p-6 shadow-sm" aria-labelledby="titolo-dettagli">
+            <h2 id="titolo-dettagli" class="font-semibold text-slate-900">Punti chiave e cosa comprende</h2>
+            <div class="mt-4 space-y-4">
+              <div>
+                <label for="punti-chiave" class="text-sm font-medium text-slate-700">Punti chiave (badge in cima alla pagina)</label>
+                <textarea id="punti-chiave" rows="4" [class]="campo" [value]="b.puntiChiave.join('\\n')"
+                  placeholder="Sopralluogo gratuito"
+                  (input)="imposta({ puntiChiave: righe(testo($event)) })" aria-describedby="aiuto-punti"></textarea>
+                <p id="aiuto-punti" class="mt-1 text-xs" [class]="contaRighe(b.puntiChiave) > 4 ? 'text-red-700' : 'text-slate-500'">
+                  Uno per riga, al massimo 4 e brevi (40 caratteri): {{ contaRighe(b.puntiChiave) }}/4.
+                </p>
+              </div>
+              <div>
+                <label for="incluso" class="text-sm font-medium text-slate-700">Cosa comprende il servizio</label>
+                <textarea id="incluso" rows="8" [class]="campo" [value]="b.incluso.join('\\n')"
+                  placeholder="Sopralluogo e verifica dell'impianto esistente"
+                  (input)="imposta({ incluso: righe(testo($event)) })" aria-describedby="aiuto-incluso"></textarea>
+                <p id="aiuto-incluso" class="mt-1 text-xs" [class]="contaRighe(b.incluso) > 12 ? 'text-red-700' : 'text-slate-500'">
+                  Una voce per riga, al massimo 12: {{ contaRighe(b.incluso) }}/12. Nella pagina diventano una lista con le spunte.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section class="rounded-2xl bg-white p-6 shadow-sm" aria-labelledby="titolo-faq">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <h2 id="titolo-faq" class="font-semibold text-slate-900">Domande frequenti ({{ b.faq.length }}/10)</h2>
+              <button type="button" (click)="aggiungiFaq()" [disabled]="b.faq.length >= 10"
+                class="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-semibold text-slate-800 hover:bg-slate-50 disabled:opacity-50">
+                + Aggiungi domanda
+              </button>
+            </div>
+            <p class="mt-1 text-xs text-slate-500">
+              Le domande che i clienti fanno davvero al telefono. Google può mostrarle direttamente nei risultati di ricerca.
+            </p>
+            <ol class="mt-4 space-y-4">
+              @for (f of b.faq; track $index; let i = $index, primo = $first, ultimo = $last) {
+                <li class="rounded-xl border border-slate-200 p-4">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="text-sm font-semibold text-slate-500">Domanda {{ i + 1 }}</span>
+                    <span class="flex gap-1">
+                      <button type="button" (click)="spostaFaq(i, -1)" [disabled]="primo" [attr.aria-label]="'Sposta su la domanda ' + (i + 1)"
+                        class="rounded-md px-2 py-1 text-sm text-slate-700 hover:bg-slate-100 disabled:opacity-40">↑</button>
+                      <button type="button" (click)="spostaFaq(i, 1)" [disabled]="ultimo" [attr.aria-label]="'Sposta giù la domanda ' + (i + 1)"
+                        class="rounded-md px-2 py-1 text-sm text-slate-700 hover:bg-slate-100 disabled:opacity-40">↓</button>
+                      <button type="button" (click)="rimuoviFaq(i)" [attr.aria-label]="'Rimuovi la domanda ' + (i + 1)"
+                        class="rounded-md px-2 py-1 text-sm font-semibold text-red-700 hover:bg-red-50">Rimuovi</button>
+                    </span>
+                  </div>
+                  <label [for]="'faq-domanda-' + i" class="mt-2 block text-sm font-medium text-slate-700">Domanda *</label>
+                  <input [id]="'faq-domanda-' + i" type="text" maxlength="200" [class]="campo" [value]="f.domanda"
+                    (input)="modificaFaq(i, { domanda: testo($event) })" />
+                  <label [for]="'faq-risposta-' + i" class="mt-3 block text-sm font-medium text-slate-700">Risposta *</label>
+                  <textarea [id]="'faq-risposta-' + i" rows="3" maxlength="1500" [class]="campo" [value]="f.risposta"
+                    (input)="modificaFaq(i, { risposta: testo($event) })"></textarea>
+                </li>
+              } @empty {
+                <li class="rounded-xl bg-slate-50 p-4 text-sm text-slate-600">Nessuna domanda: la sezione non compare nella pagina.</li>
+              }
+            </ol>
           </section>
 
           <section class="rounded-2xl bg-white p-6 shadow-sm" aria-labelledby="titolo-seo">
@@ -313,6 +379,38 @@ export default class AdminServizio {
     this.imposta({ [campo]: valore });
   }
 
+  /** Testo di una textarea "una voce per riga": le righe vuote restano finché si scrive, si tolgono al salvataggio. */
+  protected righe(testo: string): string[] {
+    return testo === '' ? [] : testo.split('\n');
+  }
+
+  protected contaRighe(voci: string[]): number {
+    return voci.filter((v) => v.trim()).length;
+  }
+
+  protected aggiungiFaq(): void {
+    this.bozza.update((b) => (b ? { ...b, faq: [...b.faq, { domanda: '', risposta: '' }] } : b));
+  }
+
+  protected modificaFaq(indice: number, modifica: Partial<Faq>): void {
+    this.bozza.update((b) => (b ? { ...b, faq: b.faq.map((f, i) => (i === indice ? { ...f, ...modifica } : f)) } : b));
+  }
+
+  protected rimuoviFaq(indice: number): void {
+    this.bozza.update((b) => (b ? { ...b, faq: b.faq.filter((_, i) => i !== indice) } : b));
+  }
+
+  protected spostaFaq(indice: number, direzione: -1 | 1): void {
+    this.bozza.update((b) => {
+      if (!b) return b;
+      const faq = [...b.faq];
+      const destinazione = indice + direzione;
+      if (destinazione < 0 || destinazione >= faq.length) return b;
+      [faq[indice], faq[destinazione]] = [faq[destinazione], faq[indice]];
+      return { ...b, faq };
+    });
+  }
+
   protected impostaCatalogo(valore: string): void {
     this.imposta({ categoriaProdotti: (valore || null) as CategoriaProdotto | null });
   }
@@ -327,8 +425,10 @@ export default class AdminServizio {
   }
 
   protected async salva(): Promise<void> {
-    const dati = this.bozza();
-    if (!dati) return;
+    const bozza = this.bozza();
+    if (!bozza) return;
+    const pulisci = (voci: string[]) => voci.map((v) => v.trim()).filter(Boolean);
+    const dati: DatiServizio = { ...bozza, puntiChiave: pulisci(bozza.puntiChiave), incluso: pulisci(bozza.incluso) };
     this.occupato.set(true);
     this.errori.set([]);
     this.messaggio.set('');

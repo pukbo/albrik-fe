@@ -165,7 +165,8 @@ interface GruppoMenu {
         display: block;
         position: absolute;
         top: 100%;
-        left: -0.5rem;
+        /* allineata a destra della voce: le voci stanno a destra dell'header, così non esce dallo schermo */
+        right: -0.5rem;
         width: 22rem;
         /* il margine trasparente tiene aperta la tendina mentre il mouse scende dalla voce */
         padding-top: 0.5rem;

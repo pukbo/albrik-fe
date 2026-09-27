@@ -83,6 +83,37 @@ export function catalogoJsonLd(prodotti: Prodotto[], nome: string, percorso: str
   };
 }
 
+/** JSON-LD della pagina di un servizio: il servizio, le briciole di pane e (se ci sono) le domande frequenti. */
+export function paginaServizioJsonLd(servizio: Servizio): object[] {
+  const url = `${SITE.url}/servizi/${servizio.slug}`;
+  return [
+    servizioJsonLd(servizio),
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url + '/' },
+        { '@type': 'ListItem', position: 2, name: 'Servizi', item: `${SITE.url}/servizi` },
+        { '@type': 'ListItem', position: 3, name: servizio.titolo, item: url },
+      ],
+    },
+    ...(servizio.faq.length > 0
+      ? [
+          {
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            url,
+            mainEntity: servizio.faq.map((f) => ({
+              '@type': 'Question',
+              name: f.domanda,
+              acceptedAnswer: { '@type': 'Answer', text: f.risposta },
+            })),
+          },
+        ]
+      : []),
+  ];
+}
+
 /** JSON-LD di un singolo servizio, collegato all'azienda che lo offre. */
 export function servizioJsonLd(servizio: Servizio): object {
   return {

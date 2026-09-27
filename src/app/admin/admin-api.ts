@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CategoriaProdotto, Prodotto } from '../core/prodotti-api';
+import { Faq } from '../core/servizi-api';
 
 /*
  * Le API admin usano URL relativi (/api/admin/...): in sviluppo passano dal proxy di ng serve,
@@ -126,6 +127,12 @@ export interface DatiServizio {
   metaDescription: string;
   /** Catalogo collegato: nel modulo contatti il cliente può sceglierne un modello. */
   categoriaProdotti: CategoriaProdotto | null;
+  /** Badge in testata alla pagina, al massimo 4. */
+  puntiChiave: string[];
+  /** Voci di "Cosa comprende", al massimo 12. */
+  incluso: string[];
+  /** Domande frequenti, al massimo 10. */
+  faq: Faq[];
   ordine: number;
   attivo: boolean;
 }

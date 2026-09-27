@@ -4,6 +4,12 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { CategoriaProdotto } from './prodotti-api';
 
+/** Domanda frequente di un servizio. */
+export interface Faq {
+  domanda: string;
+  risposta: string;
+}
+
 /** Servizio offerto da Albrik, come restituito dal backend (ServizioDto). */
 export interface Servizio {
   slug: string;
@@ -15,6 +21,11 @@ export interface Servizio {
   immagine: string | null;
   /** Catalogo collegato (es. CALDAIA): nel modulo contatti si può scegliere il modello. */
   categoriaProdotti: CategoriaProdotto | null;
+  /** Badge in testata alla pagina (es. "Sopralluogo gratuito"). */
+  puntiChiave: string[];
+  /** Voci di "Cosa comprende il servizio". */
+  incluso: string[];
+  faq: Faq[];
   ultimaModifica: string | null;
 }
 
