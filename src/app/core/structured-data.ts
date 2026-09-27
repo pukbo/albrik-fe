@@ -59,8 +59,9 @@ export function prodottoJsonLd(prodotto: Prodotto): object[] {
       '@type': 'BreadcrumbList',
       itemListElement: [
         { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url + '/' },
-        { '@type': 'ListItem', position: 2, name: categoria.plurale, item: `${SITE.url}/${categoria.percorso}` },
-        { '@type': 'ListItem', position: 3, name: prodotto.nome, item: SITE.url + prodotto.percorso },
+        { '@type': 'ListItem', position: 2, name: 'Catalogo', item: `${SITE.url}/catalogo` },
+        { '@type': 'ListItem', position: 3, name: categoria.plurale, item: `${SITE.url}/${categoria.percorso}` },
+        { '@type': 'ListItem', position: 4, name: prodotto.nome, item: SITE.url + prodotto.percorso },
       ],
     },
   ];

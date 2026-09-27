@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { adminGuard } from './admin/admin-auth';
-import { prodottiResolver, prodottoResolver } from './core/prodotti.resolvers';
+import { catalogoCompletoResolver, prodottiResolver, prodottoResolver } from './core/prodotti.resolvers';
 import { serviziResolver, servizioResolver } from './core/servizi.resolvers';
 
 export const routes: Routes = [
@@ -19,7 +19,13 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/servizio/servizio'),
     resolve: { servizio: servizioResolver },
   },
-  // Catalogo: una coppia di route per categoria (percorso come in CATEGORIE di core/prodotti-api.ts)
+  // Catalogo: la pagina con tutte le categorie, poi una coppia di route per categoria
+  // (percorso come in CATEGORIE di core/prodotti-api.ts)
+  {
+    path: 'catalogo',
+    loadComponent: () => import('./pages/catalogo/catalogo-completo'),
+    resolve: { catalogo: catalogoCompletoResolver },
+  },
   {
     path: 'caldaie',
     loadComponent: () => import('./pages/catalogo/catalogo'),

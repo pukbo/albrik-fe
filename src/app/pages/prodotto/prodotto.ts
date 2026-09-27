@@ -22,6 +22,7 @@ import NotFound from '../not-found/not-found';
           <nav briciole aria-label="Percorso" class="mb-6 text-sm text-blue-200">
             <ol class="flex flex-wrap gap-1">
               <li><a routerLink="/" class="hover:text-white hover:underline">Home</a> /</li>
+              <li><a routerLink="/catalogo" class="hover:text-white hover:underline">Catalogo</a> /</li>
               <li><a [routerLink]="'/' + info().percorso" class="hover:text-white hover:underline">{{ info().plurale }}</a> /</li>
               <li aria-current="page" class="text-white">{{ p.nome }}</li>
             </ol>

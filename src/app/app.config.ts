@@ -12,7 +12,8 @@ export const appConfig: ApplicationConfig = {
       routes,
       // parametri, query param e dati dei resolver arrivano ai componenti come input()
       withComponentInputBinding(),
-      withInMemoryScrolling({ scrollPositionRestoration: 'top' }),
+      // anchorScrolling: i link con fragment (es. /catalogo#caldaie) scorrono alla sezione
+      withInMemoryScrolling({ scrollPositionRestoration: 'top', anchorScrolling: 'enabled' }),
       // passaggio animato tra le pagine (stile in styles.css); i browser senza supporto cambiano pagina normalmente
       withViewTransitions({ skipInitialTransition: true }),
     ),

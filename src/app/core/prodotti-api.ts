@@ -13,6 +13,8 @@ export interface InfoCategoria {
   singolare: string;
   /** Titolo del catalogo (H1 e SEO). */
   titolo: string;
+  /** Una riga sotto il nome, nel menu e nella pagina /catalogo. */
+  descrizioneBreve: string;
   /** Tipo di prodotto nel meta title dei modelli, es. "caldaia a condensazione". */
   tipo: string;
   conArticolo: string;
@@ -29,6 +31,7 @@ export const CATEGORIE: Record<CategoriaProdotto, InfoCategoria> = {
     plurale: 'Caldaie',
     singolare: 'caldaia',
     titolo: 'Caldaie a condensazione',
+    descrizioneBreve: 'Modelli a condensazione, dalla più economica alla premium',
     tipo: 'caldaia a condensazione',
     conArticolo: 'la caldaia',
     pronome: 'una',
@@ -41,6 +44,7 @@ export const CATEGORIE: Record<CategoriaProdotto, InfoCategoria> = {
     plurale: 'Condizionatori',
     singolare: 'condizionatore',
     titolo: 'Condizionatori e climatizzatori',
+    descrizioneBreve: 'Mono e multi-split, anche con Wi-Fi e pompa di calore',
     tipo: 'condizionatore',
     conArticolo: 'il condizionatore',
     pronome: 'uno',

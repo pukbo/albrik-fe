@@ -22,6 +22,7 @@ import { ProdottoCard } from '../../shared/prodotto-card';
       <nav briciole aria-label="Percorso" class="mb-6 text-sm text-blue-200">
         <ol class="flex flex-wrap gap-1">
           <li><a routerLink="/" class="hover:text-white hover:underline">Home</a> /</li>
+          <li><a routerLink="/catalogo" class="hover:text-white hover:underline">Catalogo</a> /</li>
           <li aria-current="page" class="text-white">{{ info().plurale }}</li>
         </ol>
       </nav>
