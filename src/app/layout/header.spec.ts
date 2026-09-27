@@ -38,6 +38,34 @@ describe('Header', () => {
     );
   });
 
+  it('pannello mobile: si apre, le sezioni si espandono a fisarmonica, Esc lo chiude', async () => {
+    const { fixture, el } = await crea();
+    const pannello = el.querySelector('#menu-mobile')!;
+    const apri = el.querySelector<HTMLButtonElement>('button[aria-controls="menu-mobile"]')!;
+    expect(pannello.hasAttribute('inert')).toBe(true);
+
+    apri.click();
+    await fixture.whenStable();
+    expect(pannello.classList).toContain('aperto');
+    expect(pannello.hasAttribute('inert')).toBe(false);
+    expect(apri.getAttribute('aria-expanded')).toBe('true');
+
+    // Catalogo chiuso: i suoi link non sono raggiungibili finché non si espande
+    const sezione = pannello.querySelector('#mobile-catalogo')!;
+    const catalogo = pannello.querySelector<HTMLButtonElement>('button[aria-controls="mobile-catalogo"]')!;
+    expect(sezione.hasAttribute('inert')).toBe(true);
+    catalogo.click();
+    await fixture.whenStable();
+    expect(catalogo.getAttribute('aria-expanded')).toBe('true');
+    expect(sezione.hasAttribute('inert')).toBe(false);
+    expect(sezione.querySelector('a[href="/caldaie"]')).not.toBeNull();
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    await fixture.whenStable();
+    expect(pannello.classList).not.toContain('aperto');
+    expect(document.documentElement.classList).not.toContain('menu-aperto');
+  });
+
   it('apre e chiude una tendina con il pulsante e con Esc', async () => {
     const { fixture, el } = await crea();
     const pulsante = [...el.querySelectorAll<HTMLButtonElement>('button[aria-controls^="sottomenu-"]')].find((b) =>
