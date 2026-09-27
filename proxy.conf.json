@@ -2,5 +2,9 @@
   "/api": {
     "target": "http://localhost:8081",
     "secure": false
+  },
+  "/media": {
+    "target": "http://localhost:8081",
+    "secure": false
   }
 }

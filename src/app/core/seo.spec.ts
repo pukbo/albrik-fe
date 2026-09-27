@@ -29,6 +29,15 @@ describe('Seo', () => {
     expect(script[0].textContent).not.toContain('</script>');
   });
 
+  it('imposta og:image assoluta solo quando la pagina ha una foto', () => {
+    seo.aggiorna({ title: 'A', description: 'A', path: '/a', immagine: '/media/servizi/x-1600.webp' });
+    expect(document.querySelector('meta[property="og:image"]')?.getAttribute('content')).toBe(
+      'https://albrik.it/media/servizi/x-1600.webp',
+    );
+    seo.aggiorna({ title: 'B', description: 'B', path: '/b' });
+    expect(document.querySelector('meta[property="og:image"]')).toBeNull();
+  });
+
   it('rimuove il JSON-LD e imposta noindex sulle pagine che non vanno indicizzate', () => {
     seo.aggiorna({ title: 'A', description: 'A', path: '/a', jsonLd: { '@type': 'HVACBusiness' } });
     seo.aggiorna({ title: '404', description: '404', path: '/x', noindex: true });

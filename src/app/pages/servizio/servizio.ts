@@ -1,5 +1,6 @@
-import { Component, effect, inject, input } from '@angular/core';
+import { Component, computed, effect, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { fotoServizio } from '../../core/immagini';
 import { Servizio } from '../../core/servizi-api';
 import { Seo } from '../../core/seo';
 import { servizioJsonLd } from '../../core/structured-data';
@@ -23,12 +24,20 @@ import NotFound from '../not-found/not-found';
               </ol>
             </nav>
             <div class="mt-6 flex items-start gap-4">
-              <app-servizio-icona [slug]="s.slug" class="size-14 shrink-0 rounded-xl bg-blue-100 p-3 text-blue-800" />
+              @if (!foto()) {
+                <app-servizio-icona [slug]="s.slug" class="size-14 shrink-0 rounded-xl bg-blue-100 p-3 text-blue-800" />
+              }
               <div>
                 <h1 class="text-3xl font-extrabold text-slate-900 md:text-4xl">{{ s.titolo }}</h1>
                 <p class="mt-2 text-lg text-slate-600">{{ s.sommario }}</p>
               </div>
             </div>
+            @if (foto(); as f) {
+              <!-- immagine principale: caricata subito (niente lazy) perché è nella prima schermata -->
+              <img [src]="f.src" [srcset]="f.srcset" sizes="(min-width: 896px) 864px, 100vw"
+                [width]="f.larghezza" [height]="f.altezza" fetchpriority="high" decoding="async" [alt]="s.titolo"
+                class="mt-8 aspect-video w-full rounded-2xl object-cover shadow-sm" />
+            }
           </div>
         </header>
         <div class="mx-auto max-w-4xl px-4 py-12">
@@ -45,6 +54,8 @@ export default class ServizioPagina {
   /** Dal resolver della route: null se lo slug non esiste. */
   readonly servizio = input<Servizio | null>(null);
 
+  protected readonly foto = computed(() => fotoServizio(this.servizio()?.immagine));
+
   constructor() {
     const seo = inject(Seo);
     effect(() => {
@@ -54,6 +65,7 @@ export default class ServizioPagina {
           title: s.metaTitle,
           description: s.metaDescription,
           path: `/servizi/${s.slug}`,
+          immagine: s.immagine ?? undefined,
           jsonLd: servizioJsonLd(s),
         });
       }

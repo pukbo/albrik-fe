@@ -40,6 +40,7 @@ export function servizioJsonLd(servizio: Servizio): object {
     name: servizio.titolo,
     description: servizio.metaDescription,
     url: `${SITE.url}/servizi/${servizio.slug}`,
+    ...(servizio.immagine && { image: SITE.url + servizio.immagine }),
     areaServed: { '@type': 'AdministrativeArea', name: SITE.zonaServita },
     provider: aziendaJsonLd(),
   };

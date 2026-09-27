@@ -2,11 +2,12 @@ import { Component, computed, inject, input, linkedSignal, numberAttribute, sign
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom, of } from 'rxjs';
+import { fotoServizio } from '../../core/immagini';
 import { SITE } from '../../core/site.config';
 import { AdminApi, DatiServizio, ServizioAdmin } from '../admin-api';
 import { messaggiErrore } from '../errori';
 
-type CampoTesto = 'slug' | 'titolo' | 'sommario' | 'descrizione' | 'metaTitle' | 'metaDescription' | 'immagine';
+type CampoTesto = 'slug' | 'titolo' | 'sommario' | 'descrizione' | 'metaTitle' | 'metaDescription';
 
 const CAMPO =
   'mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 ' +
@@ -23,13 +24,12 @@ const VUOTO: DatiServizio = {
   descrizione: '',
   metaTitle: '',
   metaDescription: '',
-  immagine: null,
   ordine: 10,
   attivo: false,
 };
 
 function datiDi(s: ServizioAdmin): DatiServizio {
-  const { id: _id, ultimaModifica: _m, ...dati } = s;
+  const { id: _id, ultimaModifica: _m, immagine: _i, ...dati } = s;
   return dati;
 }
 
@@ -153,6 +153,33 @@ export function creaSlug(testo: string): string {
             <p class="mt-1 text-xs text-slate-500">I numeri più bassi vengono mostrati per primi.</p>
           </section>
 
+          <section class="rounded-2xl bg-white p-6 shadow-sm" aria-labelledby="titolo-foto">
+            <h2 id="titolo-foto" class="font-semibold text-slate-900">Foto</h2>
+            @if (nuovo()) {
+              <p class="mt-3 text-sm text-slate-600">Potrai caricare la foto dopo aver creato il servizio.</p>
+            } @else {
+              @if (foto(); as f) {
+                <img [src]="f.src" [srcset]="f.srcset" sizes="320px" [width]="f.larghezza" [height]="f.altezza"
+                  [alt]="'Foto attuale di ' + b.titolo" class="mt-4 aspect-video w-full rounded-lg object-cover" />
+              } @else {
+                <p class="mt-3 text-sm text-slate-600">Nessuna foto: sul sito viene mostrata un'icona.</p>
+              }
+              <label for="foto" class="mt-4 inline-block cursor-pointer rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-50 has-[:disabled]:cursor-default has-[:disabled]:opacity-60 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-blue-300">
+                {{ caricamento() ? 'Caricamento…' : foto() ? 'Sostituisci foto' : 'Carica foto' }}
+                <input id="foto" type="file" accept="image/jpeg,image/png,image/webp" class="sr-only"
+                  [disabled]="caricamento()" (change)="caricaFoto($event)" />
+              </label>
+              @if (foto()) {
+                <button type="button" (click)="rimuoviFoto()" [disabled]="caricamento()"
+                  class="ml-2 rounded-lg px-3 py-2 text-sm font-semibold text-red-700 hover:bg-red-50 disabled:opacity-60">Rimuovi</button>
+              }
+              <p class="mt-2 text-xs text-slate-500">
+                JPG, PNG o WebP fino a 10 MB, almeno 800×450 pixel. Viene ritagliata al centro in formato 16:9 e
+                convertita in WebP. Meglio una foto orizzontale di un lavoro reale.
+              </p>
+            }
+          </section>
+
           <section class="rounded-2xl bg-white p-6 shadow-sm" aria-labelledby="titolo-anteprima">
             <h2 id="titolo-anteprima" class="font-semibold text-slate-900">Anteprima su Google</h2>
             <div class="mt-4 font-[Arial,sans-serif]">
@@ -206,6 +233,46 @@ export default class AdminServizio {
     return !!s && s.attivo && this.bozza()?.slug !== s.slug;
   });
   protected readonly parole = computed(() => (this.bozza()?.descrizione.trim().split(/\s+/).filter(Boolean).length ?? 0));
+
+  protected readonly foto = computed(() => fotoServizio(this.servizio.value()?.immagine));
+  protected readonly caricamento = signal(false);
+
+  protected async caricaFoto(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = ''; // permette di ricaricare lo stesso file
+    const id = this.id();
+    if (!file || id === undefined) return;
+    if (file.size > 10 * 1024 * 1024) {
+      this.errori.set(['File troppo grande (massimo 10 MB)']);
+      return;
+    }
+    await this.operazioneFoto(() => firstValueFrom(this.api.caricaImmagine(id, file)), 'Foto caricata: è già online.');
+  }
+
+  protected async rimuoviFoto(): Promise<void> {
+    const id = this.id();
+    if (id === undefined || !confirm('Rimuovere la foto del servizio?')) return;
+    await this.operazioneFoto(() => firstValueFrom(this.api.eliminaImmagine(id)), 'Foto rimossa.');
+  }
+
+  /** La foto si salva subito e da sola: le altre modifiche della bozza restano in sospeso. */
+  private async operazioneFoto(azione: () => Promise<ServizioAdmin>, esito: string): Promise<void> {
+    this.caricamento.set(true);
+    this.errori.set([]);
+    this.messaggio.set('');
+    const bozzaInCorso = this.bozza();
+    try {
+      this.servizio.set(await azione());
+      // l'aggiornamento del servizio riallinea la bozza: ripristina le modifiche non ancora salvate
+      this.bozza.set(bozzaInCorso);
+      this.messaggio.set(esito);
+    } catch (e) {
+      this.errori.set(messaggiErrore(e));
+    } finally {
+      this.caricamento.set(false);
+    }
+  }
 
   protected readonly occupato = signal(false);
   protected readonly errori = signal<string[]>([]);

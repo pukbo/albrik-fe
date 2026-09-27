@@ -113,13 +113,14 @@ export interface DatiServizio {
   descrizione: string;
   metaTitle: string;
   metaDescription: string;
-  immagine: string | null;
   ordine: number;
   attivo: boolean;
 }
 
 export interface ServizioAdmin extends DatiServizio {
   id: number;
+  /** Gestita con caricaImmagine/eliminaImmagine, non con il salvataggio dei dati. */
+  immagine: string | null;
   ultimaModifica: string;
 }
 
@@ -184,6 +185,16 @@ export class AdminApi {
 
   aggiornaServizio(id: number, dati: DatiServizio): Observable<ServizioAdmin> {
     return this.http.put<ServizioAdmin>(`${BASE}/servizi/${id}`, dati);
+  }
+
+  caricaImmagine(id: number, file: File): Observable<ServizioAdmin> {
+    const dati = new FormData();
+    dati.append('file', file);
+    return this.http.post<ServizioAdmin>(`${BASE}/servizi/${id}/immagine`, dati);
+  }
+
+  eliminaImmagine(id: number): Observable<ServizioAdmin> {
+    return this.http.delete<ServizioAdmin>(`${BASE}/servizi/${id}/immagine`);
   }
 
   // --- Preventivi ---
