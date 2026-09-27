@@ -14,6 +14,47 @@
     font-family: var(--font-display);
     letter-spacing: -0.01em;
   }
+
+  /* niente riquadro grigio al tocco su Android/iOS: i pulsanti hanno già il loro effetto di pressione */
+  a,
+  button,
+  summary,
+  label {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* permette di animare l'altezza fino ad "auto" (apertura morbida delle domande frequenti) */
+  :root {
+    interpolate-size: allow-keywords;
+  }
+}
+
+/* con il menu mobile aperto la pagina sotto resta ferma */
+@media (max-width: 767.98px) {
+  html.menu-aperto {
+    overflow: hidden;
+  }
+}
+
+/*
+ * Domande frequenti (<details>): il contenuto si apre scorrendo invece di comparire di colpo.
+ * Solo nei browser che supportano ::details-content; negli altri si apre normalmente.
+ */
+@supports selector(::details-content) {
+  details.faq::details-content {
+    block-size: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+      block-size 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+      opacity 0.3s ease,
+      content-visibility 0.35s allow-discrete;
+  }
+
+  details.faq[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
 }
 
 /*
@@ -139,9 +180,32 @@
     animation: onda-clic 0.6s ease-out forwards;
   }
 
+  /* card e voci toccabili: si "premono" leggermente al tocco (sul telefono non c'è il passaggio del mouse) */
+  .premi {
+    transition: transform 0.15s ease;
+  }
+
+  .premi:active {
+    transform: scale(0.98);
+  }
+
   /* comparsa all'apertura della pagina, con ritardo regolabile via [animation-delay] */
   .entra {
     animation: rivela 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  /* stessa comparsa per i browser senza scroll-driven animations (Safari su iPhone): vedi core/rivela.ts */
+  .rivela-js .rivela {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 0.6s ease,
+      transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .rivela-js .rivela.vista {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   /* comparsa degli elementi mentre si scorre la pagina (solo browser che supportano le scroll-driven animations) */
@@ -321,6 +385,15 @@
   .pulsante:hover,
   .pulsante:active,
   .pulsante .freccia {
+    transform: none !important;
+  }
+
+  details.faq::details-content {
+    transition: none !important;
+  }
+
+  .premi,
+  .premi:active {
     transform: none !important;
   }
 

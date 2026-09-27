@@ -3,6 +3,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, NavigationStart, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { attivaOndaAlClic } from './core/onda-clic';
+import { attivaRivelaDiRiserva } from './core/rivela';
 import { BarraAzioni } from './layout/barra-azioni';
 import { Footer } from './layout/footer';
 import { Header } from './layout/header';
@@ -37,6 +38,16 @@ export class App {
     const documento = inject(DOCUMENT);
     // solo nel browser: sul server non ci sono clic
     afterNextRender(() => attivaOndaAlClic(documento));
+
+    // comparsa allo scorrimento anche dove il CSS non basta (Safari su iPhone): nuovi elementi a ogni pagina
+    let osservaRivela: (() => void) | null = null;
+    afterNextRender(() => {
+      osservaRivela = attivaRivelaDiRiserva(documento);
+      osservaRivela?.();
+    });
+    this.router.events
+      .pipe(filter((e) => e instanceof NavigationEnd), takeUntilDestroyed())
+      .subscribe(() => setTimeout(() => osservaRivela?.(), 50));
 
     // L'ingresso animato della home si vede solo aprendo davvero la pagina (da Google, digitando
     // l'indirizzo, ricaricando). Alla prima navigazione interna lo si disattiva finché la scheda è aperta.

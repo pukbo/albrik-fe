@@ -9,7 +9,7 @@ import { ServizioIcona } from './servizio-icona';
   imports: [RouterLink, ServizioIcona],
   template: `
     <article
-      class="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+      class="premi group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
     >
       @if (foto(); as f) {
         <!-- decorativa: il titolo del link descrive già il servizio -->

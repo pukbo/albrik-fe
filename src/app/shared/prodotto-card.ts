@@ -85,6 +85,12 @@ import { SchedaTecnica } from './scheda-tecnica';
         0 18px 36px -14px rgb(15 23 42 / 0.6);
     }
 
+    /* al tocco (telefono) la carta si "preme" */
+    .carta:active {
+      transform: scale(0.98);
+      transition-duration: 0.12s;
+    }
+
     .foto {
       transition: transform 0.35s ease;
     }
@@ -115,6 +121,7 @@ import { SchedaTecnica } from './scheda-tecnica';
     @media (prefers-reduced-motion: reduce) {
       .carta,
       .carta:hover,
+      .carta:active,
       .carta:focus-within,
       .carta:hover .foto,
       .carta:hover .freccia {
