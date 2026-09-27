@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Seo } from '../../core/seo';
 import { SITE } from '../../core/site.config';
+import { IntestazionePagina } from '../../shared/intestazione-pagina';
 
 /**
  * TODO: BOZZA. Il testo va verificato da un consulente privacy/legale prima della pubblicazione
@@ -8,10 +9,14 @@ import { SITE } from '../../core/site.config';
  */
 @Component({
   selector: 'app-privacy',
+  imports: [IntestazionePagina],
   template: `
-    <article class="mx-auto max-w-3xl px-4 py-12 md:py-16 [&_h2]:mt-8 [&_h2]:text-xl [&_h2]:font-bold [&_p]:mt-3 [&_p]:text-slate-700">
-      <h1 class="text-3xl font-extrabold text-slate-900">Informativa privacy</h1>
-      <p>Informativa ai sensi dell'art. 13 del Regolamento UE 2016/679 (GDPR) per i dati raccolti tramite il modulo contatti.</p>
+    <app-intestazione-pagina
+      etichetta="Trasparenza"
+      titolo="Informativa privacy"
+      sottotitolo="Informativa ai sensi dell'art. 13 del Regolamento UE 2016/679 (GDPR) per i dati raccolti tramite il modulo contatti."
+    />
+    <article class="mx-auto max-w-3xl px-4 py-12 md:py-16 [&_h2]:mt-8 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-blue-950 [&_p]:mt-3 [&_p]:text-slate-700">
 
       <h2>Titolare del trattamento</h2>
       <p>
