@@ -2,7 +2,7 @@ import { Component, effect, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Servizio } from '../../core/servizi-api';
 import { Seo } from '../../core/seo';
-import { SITE } from '../../core/site.config';
+import { ANNI_ESPERIENZA, SITE } from '../../core/site.config';
 import { aziendaJsonLd } from '../../core/structured-data';
 import { CtaContatti } from '../../shared/cta-contatti';
 import { ServizioCard } from '../../shared/servizio-card';
@@ -17,13 +17,15 @@ type Icona = 'scudo' | 'documento' | 'posizione' | 'garanzia';
     <section class="relative overflow-hidden bg-gradient-to-br from-blue-950 to-blue-900 text-white">
       <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:py-24 lg:grid-cols-[1fr_22rem]">
         <div>
-          <p class="font-semibold tracking-wide text-orange-300 uppercase">Impiantistica a {{ site.indirizzo.citta }}</p>
+          <p class="font-semibold tracking-wide text-orange-300 uppercase">
+            Impiantistica a {{ site.indirizzo.citta }} dal {{ site.attivitaDal }}
+          </p>
           <h1 class="mt-3 max-w-3xl text-4xl leading-tight font-bold md:text-5xl">
             Caldaie, bagni e climatizzazione: installati a regola d'arte
           </h1>
           <p class="mt-5 max-w-2xl text-lg text-blue-100">
-            {{ site.nome }} installa caldaie tradizionali e a condensazione, rinnova bagni e monta condizionatori a
-            {{ site.zonaServita }}.
+            Da {{ anni }} anni {{ site.nome }} installa caldaie tradizionali e a condensazione, rinnova bagni e monta
+            condizionatori a {{ site.zonaServita }}.
           </p>
           <div class="mt-8 flex flex-col gap-3 sm:flex-row">
             <a routerLink="/contatti" class="rounded-lg bg-orange-700 px-6 py-3 text-center font-semibold hover:bg-orange-800">
@@ -54,6 +56,11 @@ type Icona = 'scudo' | 'documento' | 'posizione' | 'garanzia';
             <path d="M32 5 C32 5 12 27 12 40 A20 20 0 0 0 52 40 C52 27 32 5 32 5 Z" fill="#3b82f6" />
             <path d="M32 24 C34 30 42 33 42 42 A10 10 0 0 1 22 42 C22 37 25 34 27 32 C27 36 29 38 31 38 C29 33 30 28 32 24 Z" fill="#fb923c" />
           </svg>
+          <!-- sigillo esperienza (decorativo: la stessa informazione è nel testo) -->
+          <div class="absolute right-2 bottom-6 flex size-28 flex-col items-center justify-center rounded-full bg-orange-700 text-center shadow-lg ring-4 ring-blue-950">
+            <span class="font-display text-4xl leading-none font-bold">{{ anni }}</span>
+            <span class="mt-1 text-xs leading-tight font-semibold uppercase">anni di<br />esperienza</span>
+          </div>
         </div>
       </div>
     </section>
@@ -136,10 +143,21 @@ export default class Home {
 
   protected readonly site = SITE;
 
-  protected readonly garanzie = ['Sopralluogo gratuito', 'Impianti certificati', 'Aiuto con le detrazioni fiscali'];
+  protected readonly anni = ANNI_ESPERIENZA;
+
+  protected readonly garanzie = [
+    `${ANNI_ESPERIENZA} anni di esperienza`,
+    'Sopralluogo gratuito',
+    'Impianti certificati',
+    'Aiuto con le detrazioni fiscali',
+  ];
 
   protected readonly puntiDiForza: { icona: Icona; titolo: string; testo: string }[] = [
-    { icona: 'scudo', titolo: 'Tecnici qualificati', testo: 'Installazioni a norma con dichiarazione di conformità per ogni impianto.' },
+    {
+      icona: 'scudo',
+      titolo: `${ANNI_ESPERIENZA} anni di esperienza`,
+      testo: `Nel settore dal ${SITE.attivitaDal}: tecnici qualificati e installazioni a norma, con dichiarazione di conformità.`,
+    },
     { icona: 'documento', titolo: 'Preventivi chiari', testo: 'Ogni voce dettagliata, IVA indicata a parte e totale chiaro: niente sorprese a fine lavori.' },
     { icona: 'garanzia', titolo: 'Lavori garantiti', testo: 'Garanzia sui lavori eseguiti e assistenza anche dopo l’installazione.' },
     { icona: 'posizione', titolo: 'Vicini a te', testo: `Operiamo a ${SITE.zonaServita}, con interventi rapidi.` },

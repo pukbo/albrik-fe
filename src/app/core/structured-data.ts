@@ -12,6 +12,7 @@ export function aziendaJsonLd(servizi: Servizio[] = []): object {
     name: SITE.nome,
     description: SITE.descrizione,
     url: SITE.url,
+    foundingDate: String(SITE.attivitaDal),
     logo: `${SITE.url}/icon-512.png`,
     image: `${SITE.url}/og-albrik.png`,
     email: SITE.email,
