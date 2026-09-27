@@ -1,6 +1,6 @@
 import { Component, DOCUMENT, afterNextRender, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, NavigationStart, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { attivaOndaAlClic } from './core/onda-clic';
 import { Footer } from './layout/footer';
@@ -35,6 +35,17 @@ export class App {
     const documento = inject(DOCUMENT);
     // solo nel browser: sul server non ci sono clic
     afterNextRender(() => attivaOndaAlClic(documento));
+
+    // L'ingresso animato della home si vede solo aprendo davvero la pagina (da Google, digitando
+    // l'indirizzo, ricaricando). Alla prima navigazione interna lo si disattiva finché la scheda è aperta.
+    let primaPaginaMostrata = false;
+    this.router.events.pipe(takeUntilDestroyed()).subscribe((evento) => {
+      if (evento instanceof NavigationEnd) {
+        primaPaginaMostrata = true;
+      } else if (evento instanceof NavigationStart && primaPaginaMostrata) {
+        documento.documentElement.classList.add('intro-vista');
+      }
+    });
   }
 
   protected readonly areaAdmin = toSignal(

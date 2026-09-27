@@ -18,17 +18,18 @@ type Icona = 'scudo' | 'documento' | 'posizione' | 'garanzia';
       <div class="griglia-punti pointer-events-none absolute inset-0" aria-hidden="true"></div>
       <div class="relative mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:py-24 lg:grid-cols-[1fr_22rem]">
         <div>
-          <p class="font-semibold tracking-wide text-orange-300 uppercase">
+          <!-- ingresso alla prima apertura (classi intro-* in styles.css): il titolo resta visibile da subito -->
+          <p class="intro-voce font-semibold tracking-wide text-orange-300 uppercase">
             Impiantistica a {{ site.indirizzo.citta }} dal {{ site.attivitaDal }}
           </p>
-          <h1 class="mt-3 max-w-3xl text-4xl leading-tight font-bold md:text-5xl">
+          <h1 class="intro-titolo mt-3 max-w-3xl text-4xl leading-tight font-bold md:text-5xl">
             Caldaie, bagni e climatizzazione: installati a regola d'arte
           </h1>
-          <p class="mt-5 max-w-2xl text-lg text-blue-100">
+          <p class="intro-voce mt-5 max-w-2xl text-lg text-blue-100 [--ritardo:120ms]">
             Da {{ anni }} anni {{ site.nome }} installa caldaie tradizionali e a condensazione, rinnova bagni e monta
             condizionatori a {{ site.zonaServita }}.
           </p>
-          <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div class="intro-voce mt-8 flex flex-col gap-3 sm:flex-row [--ritardo:220ms]">
             <a routerLink="/contatti" class="pulsante rounded-lg bg-orange-700 px-6 py-3 text-center font-semibold hover:bg-orange-800">
               Richiedi un preventivo gratuito <span class="freccia" aria-hidden="true">→</span>
             </a>
@@ -36,7 +37,7 @@ type Icona = 'scudo' | 'documento' | 'posizione' | 'garanzia';
               Scopri i servizi
             </a>
           </div>
-          <ul class="mt-8 flex flex-col gap-2 text-sm text-blue-100 sm:flex-row sm:flex-wrap sm:gap-x-6">
+          <ul class="intro-voce mt-8 flex flex-col gap-2 text-sm text-blue-100 sm:flex-row sm:flex-wrap sm:gap-x-6 [--ritardo:320ms]">
             @for (voce of garanzie; track voce) {
               <li class="flex items-center gap-2">
                 <svg class="size-5 shrink-0 text-orange-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
@@ -52,27 +53,34 @@ type Icona = 'scudo' | 'documento' | 'posizione' | 'garanzia';
         <!-- Animazioni in CSS (styles.css): onde, orbite, goccia che galleggia, fiamma che tremola.
              Tutto fermo con "riduci movimento" attivo nel sistema operativo. -->
         <div class="relative hidden aspect-square lg:block" aria-hidden="true">
-          <!-- onde d'acqua che si allargano -->
-          <div class="anim-onda absolute inset-10 rounded-full border border-blue-300/40"></div>
-          <div class="anim-onda absolute inset-10 rounded-full border border-blue-300/40 [animation-delay:-1.6s]"></div>
-          <div class="anim-onda absolute inset-10 rounded-full border border-blue-300/40 [animation-delay:-3.2s]"></div>
+          <!-- onde e orbite: compaiono per prime all'ingresso -->
+          <div class="intro-grafica absolute inset-0">
+            <!-- onde d'acqua che si allargano -->
+            <div class="anim-onda absolute inset-10 rounded-full border border-blue-300/40"></div>
+            <div class="anim-onda absolute inset-10 rounded-full border border-blue-300/40 [animation-delay:-1.6s]"></div>
+            <div class="anim-onda absolute inset-10 rounded-full border border-blue-300/40 [animation-delay:-3.2s]"></div>
 
-          <!-- orbite con i punti luminosi -->
-          <div class="absolute inset-0 rounded-full border border-white/10"></div>
-          <div class="anim-orbita absolute inset-0">
-            <span class="absolute top-0 left-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-400 shadow-[0_0_14px_4px_rgba(251,146,60,0.6)]"></span>
+            <!-- orbite con i punti luminosi -->
+            <div class="absolute inset-0 rounded-full border border-white/10"></div>
+            <div class="anim-orbita absolute inset-0">
+              <span class="absolute top-0 left-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-400 shadow-[0_0_14px_4px_rgba(251,146,60,0.6)]"></span>
+            </div>
+            <div class="absolute inset-8 rounded-full border border-white/10"></div>
+            <div class="anim-orbita-inversa absolute inset-8">
+              <span class="absolute bottom-0 left-1/2 size-2 -translate-x-1/2 translate-y-1/2 rounded-full bg-blue-300 shadow-[0_0_12px_3px_rgba(147,197,253,0.6)]"></span>
+            </div>
+            <div class="absolute inset-16 rounded-full bg-white/5"></div>
           </div>
-          <div class="absolute inset-8 rounded-full border border-white/10"></div>
-          <div class="anim-orbita-inversa absolute inset-8">
-            <span class="absolute bottom-0 left-1/2 size-2 -translate-x-1/2 translate-y-1/2 rounded-full bg-blue-300 shadow-[0_0_12px_3px_rgba(147,197,253,0.6)]"></span>
-          </div>
-          <div class="absolute inset-16 rounded-full bg-white/5"></div>
 
-          <!-- simbolo: la goccia galleggia, la fiamma tremola -->
-          <svg viewBox="0 0 64 64" class="anim-galleggia absolute inset-0 m-auto size-44 drop-shadow-[0_10px_30px_rgba(59,130,246,0.45)]">
-            <path d="M32 5 C32 5 12 27 12 40 A20 20 0 0 0 52 40 C52 27 32 5 32 5 Z" fill="#3b82f6" />
-            <path class="anim-fiamma" d="M32 24 C34 30 42 33 42 42 A10 10 0 0 1 22 42 C22 37 25 34 27 32 C27 36 29 38 31 38 C29 33 30 28 32 24 Z" fill="#fb923c" />
-          </svg>
+          <!-- simbolo: la goccia entra con un rimbalzo e poi galleggia; la fiamma si accende e poi tremola -->
+          <div class="intro-goccia absolute inset-0 flex items-center justify-center">
+            <svg viewBox="0 0 64 64" class="anim-galleggia size-44 drop-shadow-[0_10px_30px_rgba(59,130,246,0.45)]">
+              <path d="M32 5 C32 5 12 27 12 40 A20 20 0 0 0 52 40 C52 27 32 5 32 5 Z" fill="#3b82f6" />
+              <g class="intro-fiamma">
+                <path class="anim-fiamma" d="M32 24 C34 30 42 33 42 42 A10 10 0 0 1 22 42 C22 37 25 34 27 32 C27 36 29 38 31 38 C29 33 30 28 32 24 Z" fill="#fb923c" />
+              </g>
+            </svg>
+          </div>
 
           <!-- sigillo esperienza (decorativo: la stessa informazione è nel testo) -->
           <div class="anim-sigillo absolute right-2 bottom-6 flex size-28 flex-col items-center justify-center rounded-full bg-orange-700 text-center ring-4 ring-blue-950">
