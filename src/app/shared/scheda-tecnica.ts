@@ -4,6 +4,8 @@ import { Prodotto } from '../core/prodotti-api';
 interface Statistica {
   chiave: string;
   etichetta: string;
+  /** Etichetta corta per le righe compatte. */
+  breve: string;
   valore: number;
   /** Tracciato SVG dell'icona (viewBox 24×24, solo contorno). */
   icona: string;
@@ -19,6 +21,48 @@ const SEGMENTI = [1, 2, 3, 4, 5];
 @Component({
   selector: 'app-scheda-tecnica',
   template: `
+    @if (soloBarre()) {
+      <!-- versione da card dell'elenco: una riga per statistica, etichetta e barra affiancate -->
+      <dl class="space-y-2.5 text-sm">
+        @for (s of statistiche(); track s.chiave; let riga = $index) {
+          <div class="grid grid-cols-[6.5rem_1fr] items-center gap-3">
+            <dt class="flex items-center gap-1.5 font-medium text-blue-100">
+              <svg class="size-3.5 shrink-0 text-orange-300" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path [attr.d]="s.icona" />
+              </svg>
+              {{ s.breve }}
+            </dt>
+            <dd>
+              <span class="sr-only">{{ s.etichetta }}: {{ s.valore }} su 5</span>
+              <span class="flex gap-1" aria-hidden="true">
+                @for (n of segmenti; track n) {
+                  <span class="segmento h-2 flex-1 rounded-[2px]" [class.pieno]="n <= s.valore"
+                    [style.--ritardo]="riga * 140 + n * 70 + 'ms'"></span>
+                }
+              </span>
+            </dd>
+          </div>
+        }
+        <div class="grid grid-cols-[6.5rem_1fr] items-center gap-3">
+          <dt class="flex items-center gap-1.5 font-medium text-blue-100">
+            <svg class="size-3.5 shrink-0 text-orange-300" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M17 6.5A7 7 0 1 0 17 17.5M4 10h9M4 14h9" />
+            </svg>
+            Prezzo
+          </dt>
+          <dd class="font-mono font-bold tracking-wider">
+            <span class="sr-only">Fascia di prezzo {{ v().fasciaPrezzo }} su 5, {{ descrizionePrezzo() }}</span>
+            <span aria-hidden="true">
+              @for (n of segmenti; track n) {
+                <span [class]="n <= v().fasciaPrezzo ? 'text-orange-300' : 'text-white/20'">€</span>
+              }
+            </span>
+          </dd>
+        </div>
+      </dl>
+    } @else {
     <div class="scheda-gioco relative overflow-hidden rounded-2xl border border-blue-400/25 bg-blue-950 text-white"
       [class.p-5]="compatta()" [class.p-6]="!compatta()">
       <!-- angoli "da mirino" -->
@@ -97,6 +141,7 @@ const SEGMENTI = [1, 2, 3, 4, 5];
         <p class="mt-5 text-xs text-blue-200/80">Valutazioni indicative di Albrik, da 1 a 5, basate sull'esperienza di installazione.</p>
       }
     </div>
+    }
   `,
   styles: `
     .angolo {
@@ -145,6 +190,8 @@ export class SchedaTecnica {
   readonly prodotto = input.required<Prodotto>();
   /** Versione ridotta per le card dell'elenco: niente classe/potenza e niente nota. */
   readonly compatta = input(false);
+  /** Solo le barre, senza riquadro: per le card scure dell'elenco, che mostrano già livello e classe. */
+  readonly soloBarre = input(false);
 
   protected readonly segmenti = SEGMENTI;
   protected readonly v = computed(() => this.prodotto().valutazioni);
@@ -152,16 +199,24 @@ export class SchedaTecnica {
   protected readonly statistiche = computed<Statistica[]>(() => {
     const v = this.v();
     return [
-      { chiave: 'efficienza', etichetta: 'Efficienza energetica', valore: v.efficienza, icona: 'M13 2 4 14h7l-1 8 9-12h-7z' },
+      {
+        chiave: 'efficienza',
+        etichetta: 'Efficienza energetica',
+        breve: 'Efficienza',
+        valore: v.efficienza,
+        icona: 'M13 2 4 14h7l-1 8 9-12h-7z',
+      },
       {
         chiave: 'smart',
         etichetta: 'Tecnologia smart',
+        breve: 'Smart',
         valore: v.smart,
         icona: 'M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0M2 9a15 15 0 0 1 20 0M12 19.5h.01',
       },
       {
         chiave: 'silenziosita',
         etichetta: 'Silenziosità',
+        breve: 'Silenziosità',
         valore: v.silenziosita,
         icona: 'M11 5 6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6',
       },
