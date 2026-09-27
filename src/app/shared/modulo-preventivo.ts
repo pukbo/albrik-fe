@@ -73,8 +73,11 @@ const INPUT =
           <label for="servizio" class="font-medium text-slate-800">Servizio di interesse</label>
           <select id="servizio" [formField]="f.servizioSlug" [class]="input">
             <option value="">Altro / non so</option>
+            <!-- [selected]: le opzioni arrivano dopo il valore, senza il menu mostrerebbe la prima voce -->
             @for (s of servizi(); track s.slug) {
-              <option [value]="s.slug">{{ s.titolo }}</option>
+              <!-- attr.selected: già giusto nell'HTML del server, prima che parta il JavaScript -->
+              <option [value]="s.slug" [selected]="s.slug === modello().servizioSlug"
+                [attr.selected]="s.slug === modello().servizioSlug ? '' : null">{{ s.titolo }}</option>
             }
           </select>
         </div>
@@ -100,7 +103,8 @@ const INPUT =
                   [attr.aria-invalid]="mostraErrore(f.prodottoSlug) || null" aria-describedby="prodotto-errore">
                   <option value="">{{ prodotti.isLoading() ? 'Caricamento…' : 'Scegli un modello' }}</option>
                   @for (p of prodotti.value(); track p.slug) {
-                    <option [value]="p.slug">{{ p.nome }}</option>
+                    <option [value]="p.slug" [selected]="p.slug === modello().prodottoSlug"
+                      [attr.selected]="p.slug === modello().prodottoSlug ? '' : null">{{ p.nome }}</option>
                   }
                 </select>
                 <p id="prodotto-errore" class="mt-1 text-sm text-red-700">{{ errore(f.prodottoSlug) }}</p>

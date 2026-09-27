@@ -9,6 +9,7 @@ import { Seo } from '../../core/seo';
 import { paginaServizioJsonLd } from '../../core/structured-data';
 import { ANNI_ESPERIENZA, SITE, TELEFONO_LINK } from '../../core/site.config';
 import { ComeLavoriamo } from '../../shared/come-lavoriamo';
+import { CAROSELLO, ELEMENTO_CAROSELLO } from '../../shared/carosello';
 import { CtaContatti } from '../../shared/cta-contatti';
 import { IntestazionePagina } from '../../shared/intestazione-pagina';
 import { ProdottoCard } from '../../shared/prodotto-card';
@@ -32,9 +33,9 @@ import NotFound from '../not-found/not-found';
           [sottotitolo]="s.sommario"
         >
           <nav briciole aria-label="Percorso" class="mb-6 text-sm text-blue-200">
-            <ol class="flex flex-wrap gap-1">
-              <li><a routerLink="/" class="hover:text-white hover:underline">Home</a> /</li>
-              <li><a routerLink="/servizi" class="hover:text-white hover:underline">Servizi</a> /</li>
+            <ol class="flex flex-wrap items-center gap-1">
+              <li><a routerLink="/" class="inline-block py-1.5 hover:text-white hover:underline">Home</a> /</li>
+              <li><a routerLink="/servizi" class="inline-block py-1.5 hover:text-white hover:underline">Servizi</a> /</li>
               <li aria-current="page" class="text-white">{{ s.titolo }}</li>
             </ol>
           </nav>
@@ -69,7 +70,10 @@ import NotFound from '../not-found/not-found';
                 [width]="f.larghezza" [height]="f.altezza" fetchpriority="high" decoding="async" [alt]="s.titolo"
                 class="mb-10 aspect-video w-full rounded-2xl object-cover shadow-sm" />
             } @else {
-              <app-servizio-icona [slug]="s.slug" class="mb-8 size-16 rounded-2xl bg-blue-50 p-3.5 text-blue-800" />
+              <!-- senza foto: icona solo da tablet in su (sul telefono sarebbe spazio vuoto) -->
+              <div class="hidden sm:block">
+                <app-servizio-icona [slug]="s.slug" class="mb-8 size-16 rounded-2xl bg-blue-50 p-3.5 text-blue-800" />
+              </div>
             }
             <h2 class="text-2xl font-bold text-slate-900 md:text-3xl">Il servizio</h2>
             <p class="mt-4 text-lg leading-relaxed whitespace-pre-line text-slate-700">{{ s.descrizione }}</p>
@@ -113,9 +117,10 @@ import NotFound from '../not-found/not-found';
                     Vedi tutto il catalogo →
                   </a>
                 </div>
-                <ul class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <p class="mt-3 text-sm text-slate-500 sm:hidden" aria-hidden="true">Scorri per vedere gli altri modelli →</p>
+                <ul [class]="carosello">
                   @for (p of anteprima(); track p.slug) {
-                    <li class="rivela"><app-prodotto-card [prodotto]="p" /></li>
+                    <li [class]="elementoCarosello"><app-prodotto-card [prodotto]="p" /></li>
                   }
                 </ul>
               </div>
@@ -180,6 +185,8 @@ export default class ServizioPagina {
   protected readonly anni = ANNI_ESPERIENZA;
   protected readonly telefono = SITE.telefono;
   protected readonly telefonoLink = TELEFONO_LINK;
+  protected readonly carosello = CAROSELLO;
+  protected readonly elementoCarosello = ELEMENTO_CAROSELLO;
 
   private readonly prodottiApi = inject(ProdottiApi);
   protected readonly catalogo = computed(() => {

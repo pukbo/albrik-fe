@@ -68,15 +68,22 @@ interface GruppoMenu {
           </svg>
         </button>
 
+        @if (aperto()) {
+          <!-- velo scuro dietro il menu mobile: un tocco fuori lo chiude -->
+          <div class="fixed inset-x-0 top-16 bottom-0 bg-slate-900/40 md:hidden" aria-hidden="true" (click)="aperto.set(false)"></div>
+        }
         <nav id="menu-principale" aria-label="Menu principale" class="md:block" [class.hidden]="!aperto()">
           <ul
             class="absolute inset-x-0 top-16 flex max-h-[calc(100dvh-4rem)] flex-col gap-1 overflow-y-auto border-b border-slate-200 bg-white p-4 shadow-lg md:static md:max-h-none md:flex-row md:items-center md:gap-1 md:overflow-visible md:border-0 md:bg-transparent md:p-0 md:shadow-none"
           >
             @for (g of gruppi(); track g.id) {
               <li class="gruppo relative" [class.in-pausa]="inPausa()" (mouseleave)="inPausa.set(false)">
+                <!-- su telefono: titolo della sezione e link già visibili (un solo tocco per ogni pagina) -->
+                <p class="px-3 pt-2 pb-1 text-xs font-semibold tracking-wider text-slate-500 uppercase md:hidden">{{ g.etichetta }}</p>
+                <!-- da tablet in su: pulsante che apre la tendina -->
                 <button
                   type="button"
-                  class="flex w-full items-center justify-between gap-1.5 rounded-lg px-4 py-3 font-medium text-slate-700 hover:bg-slate-100 md:py-2"
+                  class="hidden w-full items-center justify-between gap-1.5 rounded-lg px-4 py-2 font-medium text-slate-700 hover:bg-slate-100 md:flex"
                   [class.text-blue-800]="attivo(g)"
                   [class.bg-blue-50]="attivo(g)"
                   [attr.aria-expanded]="sezione() === g.id"
@@ -96,11 +103,11 @@ interface GruppoMenu {
                       @for (v of g.voci; track v.path) {
                         <li>
                           <a [routerLink]="v.path" routerLinkActive="bg-blue-50" ariaCurrentWhenActive="page" (click)="chiudi(true)"
-                            class="flex items-start gap-3 rounded-xl p-3 hover:bg-slate-50">
-                            <app-servizio-icona [slug]="v.icona" class="size-10 shrink-0 rounded-lg bg-blue-50 p-2 text-blue-800" />
+                            class="flex items-center gap-3 rounded-xl p-2 hover:bg-slate-50 md:items-start md:p-3">
+                            <app-servizio-icona [slug]="v.icona" class="size-9 shrink-0 rounded-lg bg-blue-50 p-2 text-blue-800 md:size-10" />
                             <span class="min-w-0">
                               <span class="block font-semibold text-slate-900">{{ v.titolo }}</span>
-                              <span class="block text-sm text-slate-600">{{ v.descrizione }}</span>
+                              <span class="hidden text-sm text-slate-600 md:block">{{ v.descrizione }}</span>
                             </span>
                           </a>
                         </li>
@@ -139,17 +146,9 @@ interface GruppoMenu {
     </header>
   `,
   styles: `
-    /* mobile: le sezioni si aprono dentro il menu, sotto il pulsante */
-    .sottomenu {
-      display: none;
-    }
-
-    .sottomenu.aperta {
-      display: block;
-    }
-
+    /* mobile: le sezioni sono sempre aperte dentro il menu, sotto il loro titolo */
     .riquadro {
-      padding: 0.25rem 0 0.5rem 0.5rem;
+      padding: 0 0 0.5rem;
     }
 
     .freccia-giu {

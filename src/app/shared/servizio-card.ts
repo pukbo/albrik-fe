@@ -17,17 +17,20 @@ import { ServizioIcona } from './servizio-icona';
           [width]="f.larghezza" [height]="f.altezza" loading="lazy" decoding="async" alt=""
           class="aspect-video w-full object-cover" />
       }
-      <div class="flex flex-1 flex-col p-6">
+      <!-- su telefono l'icona sta accanto al testo (card più bassa), da tablet in su sopra -->
+      <div class="flex flex-1 gap-4 p-5 sm:flex-col sm:gap-0 sm:p-6">
         @if (!foto()) {
-          <app-servizio-icona [slug]="servizio().slug" class="mb-4 size-12 rounded-xl bg-blue-50 p-2.5 text-blue-800" />
+          <app-servizio-icona [slug]="servizio().slug" class="size-12 shrink-0 rounded-xl bg-blue-50 p-2.5 text-blue-800 sm:mb-4" />
         }
-        <h3 class="text-lg font-bold text-slate-900">
-          <a [routerLink]="['/servizi', servizio().slug]" class="after:absolute after:inset-0">
-            {{ servizio().titolo }}
-          </a>
-        </h3>
-        <p class="mt-2 flex-1 text-slate-600">{{ servizio().sommario }}</p>
-        <p class="mt-4 font-semibold text-blue-800 group-hover:underline" aria-hidden="true">Scopri di più →</p>
+        <div class="flex min-w-0 flex-1 flex-col">
+          <h3 class="text-lg font-bold text-slate-900">
+            <a [routerLink]="['/servizi', servizio().slug]" class="after:absolute after:inset-0">
+              {{ servizio().titolo }}
+            </a>
+          </h3>
+          <p class="mt-1.5 flex-1 text-slate-600 sm:mt-2">{{ servizio().sommario }}</p>
+          <p class="mt-3 font-semibold text-blue-800 group-hover:underline sm:mt-4" aria-hidden="true">Scopri di più →</p>
+        </div>
       </div>
     </article>
   `,

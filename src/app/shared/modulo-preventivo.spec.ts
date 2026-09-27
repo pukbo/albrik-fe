@@ -94,7 +94,9 @@ describe('ModuloPreventivo', () => {
 
       http.expectOne((r) => r.url.endsWith('/prodotti') && r.params.get('categoria') === 'CALDAIA').flush([caldaia]);
       await fixture.whenStable();
-      expect(el.querySelector('#prodotto option[value="demo-eco-24"]')).not.toBeNull();
+      // i menu mostrano davvero le voci preselezionate (le opzioni arrivano dopo il valore)
+      expect(el.querySelector<HTMLSelectElement>('#servizio')!.value).toBe('installazione-caldaie-caserta');
+      expect(el.querySelector<HTMLSelectElement>('#prodotto')!.value).toBe('demo-eco-24');
       // anteprima della scheda del modello preselezionato
       expect(el.textContent).toContain('Scheda tecnica');
 

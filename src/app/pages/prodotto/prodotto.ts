@@ -20,10 +20,10 @@ import NotFound from '../not-found/not-found';
       <article>
         <app-intestazione-pagina [etichetta]="p.marca" [titolo]="p.nome" [sottotitolo]="p.sommario">
           <nav briciole aria-label="Percorso" class="mb-6 text-sm text-blue-200">
-            <ol class="flex flex-wrap gap-1">
-              <li><a routerLink="/" class="hover:text-white hover:underline">Home</a> /</li>
-              <li><a routerLink="/catalogo" class="hover:text-white hover:underline">Catalogo</a> /</li>
-              <li><a [routerLink]="'/' + info().percorso" class="hover:text-white hover:underline">{{ info().plurale }}</a> /</li>
+            <ol class="flex flex-wrap items-center gap-1">
+              <li><a routerLink="/" class="inline-block py-1.5 hover:text-white hover:underline">Home</a> /</li>
+              <li><a routerLink="/catalogo" class="inline-block py-1.5 hover:text-white hover:underline">Catalogo</a> /</li>
+              <li><a [routerLink]="'/' + info().percorso" class="inline-block py-1.5 hover:text-white hover:underline">{{ info().plurale }}</a> /</li>
               <li aria-current="page" class="text-white">{{ p.nome }}</li>
             </ol>
           </nav>
@@ -49,7 +49,8 @@ import NotFound from '../not-found/not-found';
             </a>
           </div>
 
-          <aside class="entra lg:col-span-2" aria-label="Scheda tecnica">
+          <!-- su telefono la scheda viene prima della descrizione: è la parte più interessante -->
+          <aside class="entra order-first lg:order-none lg:col-span-2" aria-label="Scheda tecnica">
             <div class="lg:sticky lg:top-24">
               <app-scheda-tecnica [prodotto]="p" />
               <a routerLink="/contatti" [queryParams]="parametriPreventivo()"

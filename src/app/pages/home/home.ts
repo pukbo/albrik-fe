@@ -38,9 +38,9 @@ type Icona = 'scudo' | 'documento' | 'posizione' | 'garanzia';
               Scopri i servizi
             </a>
           </div>
-          <ul class="intro-voce mt-8 flex flex-col gap-2 text-sm text-blue-100 sm:flex-row sm:flex-wrap sm:gap-x-6 [--ritardo:320ms]">
+          <ul class="intro-voce mt-8 grid grid-cols-2 gap-x-3 gap-y-2 text-sm text-blue-100 sm:flex sm:flex-row sm:flex-wrap sm:gap-x-6 [--ritardo:320ms]">
             @for (voce of garanzie; track voce) {
-              <li class="flex items-center gap-2">
+              <li class="flex items-start gap-2">
                 <svg class="size-5 shrink-0 text-orange-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.5 4.5L19 7.5" />
                 </svg>
@@ -93,11 +93,11 @@ type Icona = 'scudo' | 'documento' | 'posizione' | 'garanzia';
     </section>
 
     <!-- Servizi -->
-    <section class="mx-auto max-w-6xl px-4 py-16 md:py-20" aria-labelledby="titolo-servizi">
+    <section class="mx-auto max-w-6xl px-4 py-12 md:py-20" aria-labelledby="titolo-servizi">
       <p class="font-semibold tracking-wide text-orange-700 uppercase">Cosa facciamo</p>
       <h2 id="titolo-servizi" class="mt-2 text-3xl font-bold text-blue-950 md:text-4xl">I nostri servizi</h2>
       <p class="mt-3 max-w-2xl text-slate-600">Dal sopralluogo alla certificazione, seguiamo ogni lavoro dall'inizio alla fine.</p>
-      <ul class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <ul class="mt-8 grid gap-4 sm:grid-cols-2 sm:gap-6 md:mt-10 lg:grid-cols-4">
         @for (servizio of servizi(); track servizio.slug) {
           <li class="rivela"><app-servizio-card [servizio]="servizio" /></li>
         } @empty {
@@ -108,13 +108,14 @@ type Icona = 'scudo' | 'documento' | 'posizione' | 'garanzia';
 
     <!-- Perché sceglierci -->
     <section class="bg-slate-100" aria-labelledby="titolo-perche">
-      <div class="mx-auto max-w-6xl px-4 py-16 md:py-20">
+      <div class="mx-auto max-w-6xl px-4 py-12 md:py-20">
         <p class="font-semibold tracking-wide text-orange-700 uppercase">Perché noi</p>
         <h2 id="titolo-perche" class="mt-2 text-3xl font-bold text-blue-950 md:text-4xl">Perché scegliere {{ site.nome }}</h2>
-        <ul class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <!-- su telefono: righe con l'icona a sinistra (più compatte); da tablet in su: card -->
+        <ul class="mt-8 grid gap-3 sm:grid-cols-2 sm:gap-6 md:mt-10 lg:grid-cols-4">
           @for (punto of puntiDiForza; track punto.titolo) {
-            <li class="rivela rounded-2xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-              <span class="inline-flex size-12 items-center justify-center rounded-xl bg-blue-50 text-blue-800" aria-hidden="true">
+            <li class="rivela flex gap-4 rounded-2xl bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-md sm:block sm:p-6">
+              <span class="inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-800 sm:size-12" aria-hidden="true">
                 <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                   @switch (punto.icona) {
                     @case ('scudo') {
@@ -132,8 +133,10 @@ type Icona = 'scudo' | 'documento' | 'posizione' | 'garanzia';
                   }
                 </svg>
               </span>
-              <h3 class="mt-4 text-lg font-bold text-slate-900">{{ punto.titolo }}</h3>
-              <p class="mt-2 text-slate-600">{{ punto.testo }}</p>
+              <div>
+                <h3 class="text-lg font-bold text-slate-900 sm:mt-4">{{ punto.titolo }}</h3>
+                <p class="mt-1 text-slate-600 sm:mt-2">{{ punto.testo }}</p>
+              </div>
             </li>
           }
         </ul>

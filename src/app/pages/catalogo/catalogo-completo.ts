@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { CATEGORIE, CategoriaProdotto, Prodotto } from '../../core/prodotti-api';
 import { Seo } from '../../core/seo';
 import { ANNI_ESPERIENZA, SITE } from '../../core/site.config';
+import { CAROSELLO, ELEMENTO_CAROSELLO } from '../../shared/carosello';
 import { CtaContatti } from '../../shared/cta-contatti';
 import { IntestazionePagina } from '../../shared/intestazione-pagina';
 import { ProdottoCard } from '../../shared/prodotto-card';
@@ -22,8 +23,8 @@ const IN_EVIDENZA = 3;
       [sottotitolo]="'Caldaie e condizionatori selezionati da Albrik e confrontati su efficienza, tecnologia smart, silenziosità e prezzo. Installazione a ' + site.zonaServita + '.'"
     >
       <nav briciole aria-label="Percorso" class="mb-6 text-sm text-blue-200">
-        <ol class="flex flex-wrap gap-1">
-          <li><a routerLink="/" class="hover:text-white hover:underline">Home</a> /</li>
+        <ol class="flex flex-wrap items-center gap-1">
+          <li><a routerLink="/" class="inline-block py-1.5 hover:text-white hover:underline">Home</a> /</li>
           <li aria-current="page" class="text-white">Catalogo</li>
         </ol>
       </nav>
@@ -63,9 +64,9 @@ const IN_EVIDENZA = 3;
           </div>
 
           @if (s.prodotti.length) {
-            <ul class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <ul [class]="carosello">
               @for (p of s.prodotti.slice(0, inEvidenza); track p.slug) {
-                <li class="rivela"><app-prodotto-card [prodotto]="p" /></li>
+                <li [class]="elementoCarosello"><app-prodotto-card [prodotto]="p" /></li>
               }
             </ul>
           } @else {
@@ -86,6 +87,8 @@ export default class CatalogoCompleto {
   protected readonly site = SITE;
   protected readonly anni = ANNI_ESPERIENZA;
   protected readonly inEvidenza = IN_EVIDENZA;
+  protected readonly carosello = CAROSELLO;
+  protected readonly elementoCarosello = ELEMENTO_CAROSELLO;
 
   protected readonly sezioni = computed(() =>
     (Object.keys(CATEGORIE) as CategoriaProdotto[]).map((categoria) => ({

@@ -3,6 +3,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, NavigationStart, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { attivaOndaAlClic } from './core/onda-clic';
+import { BarraAzioni } from './layout/barra-azioni';
 import { Footer } from './layout/footer';
 import { Header } from './layout/header';
 
@@ -10,7 +11,7 @@ const inAreaAdmin = (url: string | undefined) => !!url && (url === '/admin' || u
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, Footer],
+  imports: [RouterOutlet, Header, Footer, BarraAzioni],
   host: { class: 'flex min-h-dvh flex-col' },
   template: `
     @if (areaAdmin()) {
@@ -25,6 +26,7 @@ const inAreaAdmin = (url: string | undefined) => !!url && (url === '/admin' || u
         <router-outlet />
       </main>
       <app-footer />
+      <app-barra-azioni />
     }
   `,
 })

@@ -20,9 +20,9 @@ import { ProdottoCard } from '../../shared/prodotto-card';
       [sottotitolo]="'Confronta efficienza, tecnologia smart, silenziosità e prezzo: scegli il modello e ti prepariamo un preventivo per l\\'installazione a ' + site.zonaServita + '.'"
     >
       <nav briciole aria-label="Percorso" class="mb-6 text-sm text-blue-200">
-        <ol class="flex flex-wrap gap-1">
-          <li><a routerLink="/" class="hover:text-white hover:underline">Home</a> /</li>
-          <li><a routerLink="/catalogo" class="hover:text-white hover:underline">Catalogo</a> /</li>
+        <ol class="flex flex-wrap items-center gap-1">
+          <li><a routerLink="/" class="inline-block py-1.5 hover:text-white hover:underline">Home</a> /</li>
+          <li><a routerLink="/catalogo" class="inline-block py-1.5 hover:text-white hover:underline">Catalogo</a> /</li>
           <li aria-current="page" class="text-white">{{ info().plurale }}</li>
         </ol>
       </nav>
