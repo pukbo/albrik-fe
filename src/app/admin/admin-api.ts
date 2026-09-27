@@ -128,6 +128,23 @@ export interface ServizioAdmin extends DatiServizio {
   ultimaModifica: string;
 }
 
+/** Statistiche delle richieste arrivate negli ultimi N mesi (StatisticheService nel backend). */
+export interface Statistiche {
+  dal: string;
+  al: string;
+  richieste: number;
+  conPreventivo: number;
+  accettate: number;
+  rifiutate: number;
+  /** Tra 0 e 1; null se nessun preventivo inviato. */
+  tassoAccettazione: number | null;
+  valoreAccettato: number;
+  oreMediePrimoPreventivo: number | null;
+  /** mese nel formato 2026-09, dal più vecchio al corrente */
+  perMese: { mese: string; richieste: number; accettate: number }[];
+  perServizio: { slug: string | null; titolo: string; richieste: number; accettate: number }[];
+}
+
 export interface ConfigurazionePreventivi {
   aliquoteIva: number[];
   aliquotaPredefinita: number;
@@ -171,6 +188,10 @@ export class AdminApi {
 
   aggiorna(id: number, modifica: { stato?: StatoRichiesta; noteInterne?: string }): Observable<RichiestaAdmin> {
     return this.http.patch<RichiestaAdmin>(`${BASE}/richieste/${id}`, modifica);
+  }
+
+  statistiche(mesi: number): Observable<Statistiche> {
+    return this.http.get<Statistiche>(`${BASE}/statistiche`, { params: { mesi } });
   }
 
   // --- Servizi ---

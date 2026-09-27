@@ -50,6 +50,7 @@ export const routes: Routes = [
       { path: 'servizi', loadComponent: () => import('./admin/pagine/servizi') },
       { path: 'servizi/nuovo', loadComponent: () => import('./admin/pagine/servizio') },
       { path: 'servizi/:id', loadComponent: () => import('./admin/pagine/servizio') },
+      { path: 'statistiche', loadComponent: () => import('./admin/pagine/statistiche') },
     ],
   },
 

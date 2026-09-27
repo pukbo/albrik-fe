@@ -219,9 +219,10 @@ function datiDi(p: Preventivo): DatiPreventivo {
                     [class]="campo + ' mt-0!'" [value]="r.quantita ?? ''" (input)="aggiornaRiga(i, { quantita: numero($event) })" />
                   <input type="number" min="0" step="0.01" [attr.aria-label]="'Prezzo unitario riga ' + (i + 1)" placeholder="Prezzo €"
                     [class]="campo + ' mt-0!'" [value]="r.prezzoUnitario ?? ''" (input)="aggiornaRiga(i, { prezzoUnitario: numero($event) })" />
-                  <select [attr.aria-label]="'Aliquota IVA riga ' + (i + 1)" [class]="campo + ' mt-0!'" [value]="r.aliquotaIva"
+                  <select [attr.aria-label]="'Aliquota IVA riga ' + (i + 1)" [class]="campo + ' mt-0!'"
                     (change)="aggiornaRiga(i, { aliquotaIva: numero($event) ?? 22 })">
-                    @for (a of aliquote(); track a) { <option [value]="a">{{ a }}%</option> }
+                    <!-- [selected] sulle opzioni: [value] sul select verrebbe applicato prima che le opzioni esistano -->
+                    @for (a of aliquote(); track a) { <option [value]="a" [selected]="a === r.aliquotaIva">{{ a }}%</option> }
                   </select>
                   <span class="self-center text-right font-medium text-slate-900">{{ euro(importo(r)) }}</span>
                   <span class="col-span-2 flex justify-end gap-1 self-center lg:col-span-1" [class.invisible]="solaLettura()">

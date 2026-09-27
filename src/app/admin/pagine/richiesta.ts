@@ -79,10 +79,11 @@ import { euro } from '../totali';
         <section class="h-fit rounded-2xl bg-white p-6 shadow-sm" aria-label="Gestione">
           <h2 class="font-semibold text-slate-900">Gestione</h2>
           <label for="stato" class="mt-4 block text-sm font-medium text-slate-700">Stato</label>
-          <select id="stato" [value]="stato()" (change)="stato.set($any($event.target).value)"
+          <!-- [selected] sulle opzioni: [value] sul select verrebbe applicato prima che le opzioni esistano -->
+          <select id="stato" (change)="stato.set($any($event.target).value)"
             class="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 focus:border-blue-700 focus:ring-2 focus:ring-blue-200 focus:outline-none">
             @for (s of stati; track s.valore) {
-              <option [value]="s.valore">{{ s.etichetta }}</option>
+              <option [value]="s.valore" [selected]="s.valore === stato()">{{ s.etichetta }}</option>
             }
           </select>
 
