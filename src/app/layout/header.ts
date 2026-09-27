@@ -44,7 +44,8 @@ interface GruppoMenu {
     '(document:click)': 'clicFuori($event)',
   },
   template: `
-    <header class="testata-sito border-b border-slate-200 bg-white/95 backdrop-blur">
+    <!-- bianco pieno: una testata semitrasparente sopra le fasce blu diventerebbe grigia -->
+    <header class="testata-sito border-b border-slate-200 bg-white">
       <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <a routerLink="/" [attr.aria-label]="site.nome + ', torna alla home'" (click)="chiudiSezione(); aperto.set(false)">
           <app-logo [dimensione]="36" />
@@ -69,7 +70,7 @@ interface GruppoMenu {
 
         <nav id="menu-principale" aria-label="Menu principale" class="md:block" [class.hidden]="!aperto()">
           <ul
-            class="absolute inset-x-0 top-16 flex max-h-[calc(100dvh-4rem)] flex-col gap-1 overflow-y-auto border-b border-slate-200 bg-white p-4 shadow-lg md:static md:max-h-none md:flex-row md:items-center md:gap-1 md:overflow-visible md:border-0 md:p-0 md:shadow-none"
+            class="absolute inset-x-0 top-16 flex max-h-[calc(100dvh-4rem)] flex-col gap-1 overflow-y-auto border-b border-slate-200 bg-white p-4 shadow-lg md:static md:max-h-none md:flex-row md:items-center md:gap-1 md:overflow-visible md:border-0 md:bg-transparent md:p-0 md:shadow-none"
           >
             @for (g of gruppi(); track g.id) {
               <li class="gruppo relative" [class.in-pausa]="inPausa()" (mouseleave)="inPausa.set(false)">
