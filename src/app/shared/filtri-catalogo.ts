@@ -147,8 +147,15 @@ const ICONE = {
             <div class="scelte">
               @for (o of opzioni().marche; track o.valore) {
                 <button type="button" class="chip" [attr.aria-pressed]="filtri().marche.includes(o.valore)" (click)="alterna('marche', o.valore)">
-                  <svg class="spunta" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10" /></svg>
-                  {{ o.etichetta }} <span class="conteggio">{{ o.conteggio }}</span>
+                  {{ o.etichetta }}
+                  <!-- selezionata: il numero diventa una spunta (stessa larghezza, niente a capo) -->
+                  <span class="conteggio">
+                    @if (filtri().marche.includes(o.valore)) {
+                      <svg class="spunta" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10" /></svg>
+                    } @else {
+                      {{ o.conteggio }}
+                    }
+                  </span>
                 </button>
               }
             </div>
@@ -163,8 +170,15 @@ const ICONE = {
             <div class="scelte">
               @for (o of opzioni().potenze; track o.valore) {
                 <button type="button" class="chip" [attr.aria-pressed]="filtri().potenze.includes(o.valore)" (click)="alterna('potenze', o.valore)">
-                  <svg class="spunta" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10" /></svg>
-                  {{ o.etichetta }} <span class="conteggio">{{ o.conteggio }}</span>
+                  {{ o.etichetta }}
+                  <!-- selezionata: il numero diventa una spunta (stessa larghezza, niente a capo) -->
+                  <span class="conteggio">
+                    @if (filtri().potenze.includes(o.valore)) {
+                      <svg class="spunta" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10" /></svg>
+                    } @else {
+                      {{ o.conteggio }}
+                    }
+                  </span>
                 </button>
               }
             </div>
@@ -180,7 +194,15 @@ const ICONE = {
               @for (o of opzioni().classi; track o.valore) {
                 <button type="button" class="chip" [attr.aria-pressed]="filtri().classi.includes(o.valore)" (click)="alterna('classi', o.valore)">
                   <span class="pallino" [style.background]="coloreClasse(o.valore)" aria-hidden="true"></span>
-                  {{ o.etichetta }} <span class="conteggio">{{ o.conteggio }}</span>
+                  {{ o.etichetta }}
+                  <!-- selezionata: il numero diventa una spunta (stessa larghezza, niente a capo) -->
+                  <span class="conteggio">
+                    @if (filtri().classi.includes(o.valore)) {
+                      <svg class="spunta" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10" /></svg>
+                    } @else {
+                      {{ o.conteggio }}
+                    }
+                  </span>
                 </button>
               }
             </div>
@@ -332,19 +354,15 @@ const ICONE = {
     }
 
     /* spunta che compare sulle pillole selezionate */
+    /* spunta al posto del numero nel badge (compare con un piccolo rimbalzo) */
     .spunta {
-      display: none;
-      width: 0.9rem;
-      height: 0.9rem;
+      width: 0.75rem;
+      height: 1.25rem;
       fill: none;
       stroke: currentColor;
-      stroke-width: 3;
+      stroke-width: 3.5;
       stroke-linecap: round;
       stroke-linejoin: round;
-    }
-
-    .chip[aria-pressed='true'] .spunta {
-      display: inline;
       animation: comparsa-spunta 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
@@ -358,6 +376,8 @@ const ICONE = {
     .conteggio {
       display: inline-flex;
       min-width: 1.25rem;
+      height: 1.25rem;
+      align-items: center;
       justify-content: center;
       padding: 0 0.3rem;
       border-radius: 9999px;
@@ -367,9 +387,10 @@ const ICONE = {
       color: #475569;
     }
 
+    /* selezionata: badge bianco con la spunta blu */
     .chip[aria-pressed='true'] .conteggio {
-      background: rgb(255 255 255 / 0.2);
-      color: white;
+      background: white;
+      color: #1e40af;
     }
 
     /* pallino colorato come sull'etichetta energetica */
@@ -501,7 +522,7 @@ const ICONE = {
       }
 
       .pannello-filtri.aperto,
-      .chip[aria-pressed='true'] .spunta {
+      .spunta {
         animation: none !important;
       }
     }
