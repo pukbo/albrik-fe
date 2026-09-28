@@ -35,12 +35,16 @@ interface Passo {
           <span class="linea" aria-hidden="true"></span>
 
           @for (p of passi; track p.titolo; let i = $index) {
-            <li class="rivela relative flex gap-4 md:flex-col md:items-center md:gap-5" [style.animation-delay]="i * 80 + 'ms'">
-              <span class="tappa font-display relative z-10 inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-orange-700 text-lg font-bold text-white shadow-md shadow-orange-700/30 ring-4 ring-white" aria-hidden="true">
+            <!--
+              Il cerchio della tappa è a cavallo del bordo della card (a sinistra su telefono, in alto da
+              tablet in su): cerchio, card e linea formano un unico percorso.
+            -->
+            <li class="rivela relative flex md:flex-col md:items-center" [style.animation-delay]="i * 80 + 'ms'">
+              <span class="tappa font-display relative z-10 mt-5 -mr-[1.375rem] inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-orange-700 text-lg font-bold text-white shadow-md shadow-orange-700/30 ring-4 ring-white md:mt-0 md:mr-0 md:-mb-[1.375rem]" aria-hidden="true">
                 {{ i + 1 }}
               </span>
 
-              <div class="card group relative flex h-full w-full min-w-0 flex-col rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200 md:p-6">
+              <div class="card group relative flex w-full min-w-0 flex-1 flex-col rounded-2xl bg-white py-5 pr-5 pl-10 shadow-sm ring-1 ring-slate-200 md:px-6 md:pt-10 md:pb-6">
                 <div class="flex items-center justify-between gap-3">
                   <p class="text-xs font-semibold tracking-wider text-slate-500 uppercase">Passo {{ i + 1 }} di {{ passi.length }}</p>
                   <span class="icona inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-orange-700 text-white shadow-md shadow-orange-600/25" aria-hidden="true">
