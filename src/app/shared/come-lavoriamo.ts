@@ -64,7 +64,8 @@ interface Passo {
      * Tratto tratteggiato che collega ogni tappa alla successiva, disegnato solo nello spazio tra le card
      * (così non passa mai dietro una card, nemmeno mentre compare sfumata).
      * Telefono: verticale, dal fondo della card al cerchio della successiva (spazio di 2.5rem).
-     * Da tablet in su: orizzontale, all'altezza del bordo superiore delle card (spazio di 1.5rem).
+     * Da tablet in su: orizzontale, a metà altezza delle card (spazio di 1.5rem). La card comincia a
+     * 1.75rem dall'alto (metà del cerchio), quindi il suo centro è a 50% + 0.875rem.
      */
     .passo:not(:last-child)::after {
       content: '';
@@ -77,7 +78,7 @@ interface Passo {
 
     @media (min-width: 768px) {
       .passo:not(:last-child)::after {
-        top: calc(1.75rem - 1px);
+        top: calc(50% + 0.875rem - 1px);
         left: 100%;
         width: 1.5rem;
         height: 0;
