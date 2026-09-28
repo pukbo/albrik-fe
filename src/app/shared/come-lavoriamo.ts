@@ -30,32 +30,30 @@ interface Passo {
           </p>
         </div>
 
-        <ol class="passi relative mt-10 grid gap-5 md:mt-14 md:grid-cols-4 md:gap-6">
-          <!-- linea tratteggiata che collega i passi: dietro le card, visibile negli spazi tra una e l'altra -->
+        <!-- percorso a tappe: cerchi numerati uniti da una linea, sotto (o accanto) la card di ogni passo -->
+        <ol class="relative mt-10 grid gap-6 md:mt-14 md:grid-cols-4">
           <span class="linea" aria-hidden="true"></span>
 
           @for (p of passi; track p.titolo; let i = $index) {
-            <li class="rivela relative" [style.animation-delay]="i * 80 + 'ms'">
-              <div class="card group relative h-full overflow-hidden rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200 md:p-6">
-                <!-- numero in filigrana -->
-                <span class="font-display pointer-events-none absolute -top-2 right-3 text-7xl font-bold text-slate-100 select-none md:text-8xl" aria-hidden="true">
-                  {{ (i + 1).toString().padStart(2, '0') }}
-                </span>
+            <li class="rivela relative flex gap-4 md:flex-col md:items-center md:gap-5" [style.animation-delay]="i * 80 + 'ms'">
+              <span class="tappa font-display relative z-10 inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-orange-700 text-lg font-bold text-white shadow-md shadow-orange-700/30 ring-4 ring-white" aria-hidden="true">
+                {{ i + 1 }}
+              </span>
 
-                <div class="relative flex items-start gap-4 md:block">
-                  <span class="icona inline-flex size-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-orange-700 text-white shadow-lg shadow-orange-600/25" aria-hidden="true">
-                    <svg class="size-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <div class="card group relative flex h-full w-full min-w-0 flex-col rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200 md:p-6">
+                <div class="flex items-center justify-between gap-3">
+                  <p class="text-xs font-semibold tracking-wider text-slate-500 uppercase">Passo {{ i + 1 }} di {{ passi.length }}</p>
+                  <span class="icona inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-orange-700 text-white shadow-md shadow-orange-600/25" aria-hidden="true">
+                    <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                       <path [attr.d]="p.icona" />
                     </svg>
                   </span>
-                  <div class="min-w-0 md:mt-5">
-                    <p class="inline-flex rounded-full bg-orange-50 px-2.5 py-0.5 text-xs font-semibold text-orange-700 ring-1 ring-orange-100">
-                      <span class="sr-only">Passo {{ i + 1 }}: </span>{{ p.etichetta }}
-                    </p>
-                    <h3 class="mt-2 text-lg font-bold text-slate-900">{{ p.titolo }}</h3>
-                    <p class="mt-1.5 leading-relaxed text-slate-600">{{ p.testo }}</p>
-                  </div>
                 </div>
+                <h3 class="mt-3 text-lg font-bold text-slate-900">{{ p.titolo }}</h3>
+                <p class="mt-1.5 flex-1 leading-relaxed text-slate-600">{{ p.testo }}</p>
+                <p class="mt-4 inline-flex self-start rounded-full bg-orange-50 px-2.5 py-0.5 text-xs font-semibold text-orange-700 ring-1 ring-orange-100">
+                  {{ p.etichetta }}
+                </p>
               </div>
             </li>
           }
@@ -64,23 +62,27 @@ interface Passo {
     </section>
   `,
   styles: `
-    /* telefono: linea verticale all'altezza delle icone; da tablet in su: orizzontale */
+    /*
+     * Linea che unisce i cerchi delle tappe (cerchi da 2.75rem, centro a 1.375rem).
+     * Telefono: verticale a sinistra. Da tablet in su: orizzontale, dal centro del primo cerchio
+     * al centro dell'ultimo (colonne uguali con spazio di 1.5rem).
+     */
     .linea {
       position: absolute;
-      top: 1rem;
-      bottom: 1rem;
-      left: calc(1.25rem + 1.75rem - 1px);
-      border-left: 2px dashed #fed7aa;
+      top: 1.375rem;
+      bottom: 1.375rem;
+      left: calc(1.375rem - 1px);
+      border-left: 2px dashed #fdba74;
     }
 
     @media (min-width: 768px) {
       .linea {
-        top: calc(1.5rem + 1.75rem - 1px);
+        top: calc(1.375rem - 1px);
         bottom: auto;
-        left: 1.5rem;
-        right: 1.5rem;
+        left: calc((100% - 4.5rem) / 8);
+        right: calc((100% - 4.5rem) / 8);
         border-left: 0;
-        border-top: 2px dashed #fed7aa;
+        border-top: 2px dashed #fdba74;
       }
     }
 
@@ -103,11 +105,21 @@ interface Passo {
       transform: rotate(-6deg) scale(1.06);
     }
 
+    .tappa {
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    li:hover .tappa {
+      transform: scale(1.12);
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .card,
       .card:hover,
       .icona,
-      .card:hover .icona {
+      .card:hover .icona,
+      .tappa,
+      li:hover .tappa {
         transition: none;
         transform: none;
       }
