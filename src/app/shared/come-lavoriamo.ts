@@ -40,22 +40,18 @@ interface Passo {
               tablet in su): cerchio, card e linea formano un unico percorso.
             -->
             <li class="rivela relative flex md:flex-col md:items-center" [style.animation-delay]="i * 80 + 'ms'">
-              <span class="tappa font-display relative z-10 mt-5 -mr-[1.375rem] inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-orange-700 text-lg font-bold text-white shadow-md shadow-orange-700/30 ring-4 ring-white md:mt-0 md:mr-0 md:-mb-[1.375rem]" aria-hidden="true">
-                {{ i + 1 }}
+              <!-- tappa: icona del passo in un cerchio arancione -->
+              <span class="tappa relative z-10 mt-5 -mr-7 inline-flex size-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-orange-700 text-white shadow-lg shadow-orange-600/30 ring-4 ring-white md:mt-0 md:mr-0 md:-mb-7" aria-hidden="true">
+                <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                  <path [attr.d]="p.icona" />
+                </svg>
               </span>
 
-              <div class="card group relative flex w-full min-w-0 flex-1 flex-col rounded-2xl bg-white py-5 pr-5 pl-10 shadow-sm ring-1 ring-slate-200 md:px-6 md:pt-10 md:pb-6">
-                <div class="flex items-center justify-between gap-3">
-                  <p class="text-xs font-semibold tracking-wider text-slate-500 uppercase">Passo {{ i + 1 }} di {{ passi.length }}</p>
-                  <span class="icona inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-orange-700 text-white shadow-md shadow-orange-600/25" aria-hidden="true">
-                    <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                      <path [attr.d]="p.icona" />
-                    </svg>
-                  </span>
-                </div>
-                <h3 class="mt-3 text-lg font-bold text-slate-900">{{ p.titolo }}</h3>
+              <div class="card group relative flex w-full min-w-0 flex-1 flex-col rounded-2xl bg-white py-5 pr-5 pl-11 shadow-sm ring-1 ring-slate-200 md:px-6 md:pt-11 md:pb-6 md:text-center">
+                <p class="text-xs font-semibold tracking-wider text-orange-700 uppercase">Passo {{ i + 1 }} di {{ passi.length }}</p>
+                <h3 class="mt-2 text-lg font-bold text-slate-900">{{ p.titolo }}</h3>
                 <p class="mt-1.5 flex-1 leading-relaxed text-slate-600">{{ p.testo }}</p>
-                <p class="mt-4 inline-flex self-start rounded-full bg-orange-50 px-2.5 py-0.5 text-xs font-semibold text-orange-700 ring-1 ring-orange-100">
+                <p class="mt-4 inline-flex self-start rounded-full bg-orange-50 md:self-center px-2.5 py-0.5 text-xs font-semibold text-orange-700 ring-1 ring-orange-100">
                   {{ p.etichetta }}
                 </p>
               </div>
@@ -67,21 +63,22 @@ interface Passo {
   `,
   styles: `
     /*
-     * Linea che unisce i cerchi delle tappe (cerchi da 2.75rem, centro a 1.375rem).
+     * Linea che unisce le tappe (cerchi da 3.5rem, centro a 1.75rem), lungo il bordo delle card:
+     * resta dietro le card e si vede negli spazi tra una e l'altra.
      * Telefono: verticale a sinistra. Da tablet in su: orizzontale, dal centro del primo cerchio
      * al centro dell'ultimo (colonne uguali con spazio di 1.5rem).
      */
     .linea {
       position: absolute;
-      top: 1.375rem;
-      bottom: 1.375rem;
-      left: calc(1.375rem - 1px);
+      top: 1.75rem;
+      bottom: 1.75rem;
+      left: calc(1.75rem - 1px);
       border-left: 2px dashed #fdba74;
     }
 
     @media (min-width: 768px) {
       .linea {
-        top: calc(1.375rem - 1px);
+        top: calc(1.75rem - 1px);
         bottom: auto;
         left: calc((100% - 4.5rem) / 8);
         right: calc((100% - 4.5rem) / 8);
@@ -101,27 +98,17 @@ interface Passo {
       box-shadow: 0 18px 36px -18px rgb(15 23 42 / 0.25);
     }
 
-    .icona {
-      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    .card:hover .icona {
-      transform: rotate(-6deg) scale(1.06);
-    }
-
     .tappa {
       transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     li:hover .tappa {
-      transform: scale(1.12);
+      transform: rotate(-8deg) scale(1.1);
     }
 
     @media (prefers-reduced-motion: reduce) {
       .card,
       .card:hover,
-      .icona,
-      .card:hover .icona,
       .tappa,
       li:hover .tappa {
         transition: none;
