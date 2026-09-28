@@ -212,6 +212,72 @@
     animation: punto 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
   }
 
+  /*
+   * Interruttore acceso/spento: <span class="interruttore" [class.acceso]="..."><span></span></span>
+   * dentro un <button role="switch">.
+   */
+  .interruttore {
+    position: relative;
+    flex-shrink: 0;
+    width: 2.75rem;
+    height: 1.6rem;
+    border-radius: 9999px;
+    background: #cbd5e1;
+    transition: background-color 0.2s ease;
+  }
+
+  .interruttore > span {
+    position: absolute;
+    top: 0.2rem;
+    left: 0.2rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 9999px;
+    background: white;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
+    transition: transform 0.2s ease;
+  }
+
+  .interruttore.acceso {
+    background: #1e40af;
+  }
+
+  .interruttore.acceso > span {
+    transform: translateX(1.15rem);
+  }
+
+  /* Selettore a segmenti (una sola scelta su una riga): pulsanti role="radio" dentro .segmenti */
+  .segmenti {
+    display: flex;
+    padding: 0.25rem;
+    border-radius: 0.75rem;
+    background: #f1f5f9;
+  }
+
+  .segmenti > button {
+    flex: 1;
+    min-height: 2.25rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #475569;
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .segmenti > button:hover {
+    color: #0f172a;
+  }
+
+  .segmenti > button[aria-checked='true'] {
+    background: white;
+    color: #c2410c;
+    box-shadow: 0 1px 3px rgb(15 23 42 / 0.15);
+  }
+
   /* card e voci toccabili: si "premono" leggermente al tocco (sul telefono non c'è il passaggio del mouse) */
   .premi {
     transition: transform 0.15s ease;
@@ -446,6 +512,12 @@
   .premi,
   .premi:active {
     transform: none !important;
+  }
+
+  .interruttore,
+  .interruttore > span,
+  .segmenti > button {
+    transition: none !important;
   }
 
   /* le onde senza animazione diventerebbero cerchi fermi: meglio nasconderle */
