@@ -6,7 +6,7 @@ import { CATEGORIE } from '../core/prodotti-api';
 import { ServiziApi } from '../core/servizi-api';
 import { SITE, TELEFONO_LINK } from '../core/site.config';
 import { Logo } from '../shared/logo';
-import { ServizioIcona } from '../shared/servizio-icona';
+import { ServizioIcona, tonoIcona } from '../shared/servizio-icona';
 
 type IdGruppo = 'servizi' | 'catalogo';
 
@@ -25,6 +25,16 @@ interface GruppoMenu {
   tutti: { path: string; etichetta: string };
   /** Percorsi che rendono attiva la voce del menu. */
   prefissi: string[];
+}
+
+/**
+ * Riga breve per il menu: la parte del sommario prima dei due punti (o del primo punto),
+ * es. "Ristrutturazione completa del bagno: impianti…" -> "Ristrutturazione completa del bagno".
+ * Mai tagliata a metà: se resta lunga ci pensa il CSS (al massimo due righe).
+ */
+export function descrizioneMenu(sommario: string): string {
+  const fine = sommario.search(/[:.]/);
+  return (fine > 0 ? sommario.slice(0, fine) : sommario).trim();
 }
 
 /**
@@ -92,13 +102,17 @@ interface GruppoMenu {
                     <ul class="space-y-0.5">
                       @for (v of g.voci; track v.path) {
                         <li>
-                          <a [routerLink]="v.path" routerLinkActive="bg-blue-50" ariaCurrentWhenActive="page" (click)="chiudiTendina()"
-                            class="flex items-start gap-3 rounded-xl p-3 transition-colors hover:bg-slate-50">
-                            <app-servizio-icona [slug]="v.icona" class="size-10 shrink-0 rounded-lg bg-blue-50 p-2 text-blue-800" />
-                            <span class="min-w-0">
+                          <a [routerLink]="v.path" routerLinkActive="bg-slate-50" ariaCurrentWhenActive="page" (click)="chiudiTendina()"
+                            class="voce-tendina flex items-center gap-3 rounded-xl p-3 transition-colors hover:bg-slate-50">
+                            <app-servizio-icona [slug]="v.icona" [class]="'size-10 shrink-0 rounded-lg p-2 ring-1 ' + tono(v.icona)" />
+                            <span class="min-w-0 flex-1">
                               <span class="block font-semibold text-slate-900">{{ v.titolo }}</span>
-                              <span class="block text-sm text-slate-600">{{ v.descrizione }}</span>
+                              <span class="line-clamp-2 block text-sm text-slate-600">{{ v.descrizione }}</span>
                             </span>
+                            <svg class="freccia-voce size-4 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                              stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                              <path d="M5 12h14M13 6l6 6-6 6" />
+                            </svg>
                           </a>
                         </li>
                       }
@@ -397,6 +411,22 @@ interface GruppoMenu {
       transform: translateY(0);
     }
 
+    /* freccia della voce: compare scivolando al passaggio del mouse */
+    .freccia-voce {
+      opacity: 0;
+      transform: translateX(-4px);
+      transition:
+        opacity 0.18s ease,
+        transform 0.18s ease;
+    }
+
+    .voce-tendina:hover .freccia-voce,
+    .voce-tendina:focus-visible .freccia-voce {
+      opacity: 1;
+      transform: translateX(0);
+      color: #1e40af;
+    }
+
     .riquadro {
       padding: 0.5rem;
       border: 1px solid rgb(226 232 240);
@@ -425,7 +455,8 @@ interface GruppoMenu {
       .piu::before,
       .piu::after,
       .sottomenu,
-      .freccia-giu {
+      .freccia-giu,
+      .freccia-voce {
         transition: none !important;
       }
 
@@ -444,6 +475,8 @@ export class Header {
 
   protected readonly site = SITE;
   protected readonly telefonoLink = TELEFONO_LINK;
+  /** Colori dell'icona per tipo di servizio (arancio calore, blu acqua, azzurro fresco). */
+  protected readonly tono = tonoIcona;
   /** Pannello mobile aperto. */
   protected readonly aperto = signal(false);
   /** Sezione aperta nella fisarmonica del pannello mobile. */
@@ -480,7 +513,7 @@ export class Header {
       voci: this.servizi.value().map((s) => ({
         path: `/servizi/${s.slug}`,
         titolo: s.titolo,
-        descrizione: s.sommario.length > 70 ? s.sommario.slice(0, 68).trimEnd() + '…' : s.sommario,
+        descrizione: descrizioneMenu(s.sommario),
         icona: s.slug,
       })),
       tutti: { path: '/servizi', etichetta: 'Tutti i servizi' },

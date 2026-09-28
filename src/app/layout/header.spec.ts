@@ -2,7 +2,17 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { Header } from './header';
+import { Header, descrizioneMenu } from './header';
+
+describe('descrizioneMenu', () => {
+  it('usa la parte del sommario prima dei due punti, senza tagliare le parole', () => {
+    expect(descrizioneMenu('Ristrutturazione completa del bagno: impianti, sanitari e box doccia.')).toBe(
+      'Ristrutturazione completa del bagno',
+    );
+    expect(descrizioneMenu('Manutenzione annuale della caldaia.')).toBe('Manutenzione annuale della caldaia');
+    expect(descrizioneMenu('Senza punteggiatura')).toBe('Senza punteggiatura');
+  });
+});
 
 describe('Header', () => {
   async function crea() {
