@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input } from '@angular/core';
+import { Component, computed, effect, inject, input, linkedSignal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { catchError, of } from 'rxjs';
@@ -14,7 +14,7 @@ import { CtaContatti } from '../../shared/cta-contatti';
 import { ElencoFaq } from '../../shared/elenco-faq';
 import { IntestazionePagina } from '../../shared/intestazione-pagina';
 import { ProdottoCard } from '../../shared/prodotto-card';
-import { ServizioIcona } from '../../shared/servizio-icona';
+import { ServizioIcona, tonoIcona } from '../../shared/servizio-icona';
 import NotFound from '../not-found/not-found';
 
 /**
@@ -29,7 +29,7 @@ import NotFound from '../not-found/not-found';
     @if (servizio(); as s) {
       <article>
         <app-intestazione-pagina
-          [etichetta]="'Servizio a ' + zona + ' · ' + anni + ' anni di esperienza'"
+          [etichetta]="anni + ' anni di esperienza a ' + zona"
           [titolo]="s.titolo"
           [sottotitolo]="s.sommario"
         >
@@ -42,11 +42,15 @@ import NotFound from '../not-found/not-found';
           </nav>
 
           @if (s.puntiChiave.length) {
-            <ul class="mt-6 flex flex-wrap gap-2" aria-label="Punti chiave">
+            <!-- punti chiave: riquadro in vetro smerigliato con le spunte (come le garanzie della home) -->
+            <ul class="mt-6 divide-y divide-white/10 overflow-hidden rounded-2xl bg-white/10 ring-1 ring-white/15 backdrop-blur-sm sm:inline-flex sm:divide-x sm:divide-y-0"
+              aria-label="Punti chiave">
               @for (punto of s.puntiChiave; track punto) {
-                <li class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1.5 text-sm font-medium text-white ring-1 ring-white/15">
-                  <svg class="size-4 text-orange-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10" /></svg>
+                <li class="flex items-center gap-3 px-4 py-3 text-[0.9375rem] font-medium text-white">
+                  <span class="inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-orange-500/20 text-orange-300" aria-hidden="true">
+                    <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                      stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10" /></svg>
+                  </span>
                   {{ punto }}
                 </li>
               }
@@ -54,10 +58,15 @@ import NotFound from '../not-found/not-found';
           }
           <div class="mt-8 flex flex-col gap-3 sm:flex-row">
             <a routerLink="/contatti" [queryParams]="{ servizio: s.slug }"
-              class="pulsante rounded-lg bg-orange-700 px-6 py-3 text-center font-semibold text-white hover:bg-orange-800">
+              class="pulsante rounded-xl bg-orange-700 px-6 py-4 text-center text-lg font-semibold text-white shadow-lg shadow-orange-950/30 hover:bg-orange-800 sm:rounded-lg sm:py-3 sm:text-base">
               Richiedi un preventivo gratuito <span class="freccia" aria-hidden="true">→</span>
             </a>
-            <a [href]="telefonoLink" class="pulsante rounded-lg border border-white/40 px-6 py-3 text-center font-semibold text-white hover:bg-white/10">
+            <a [href]="telefonoLink"
+              class="pulsante flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/5 px-6 py-3.5 font-semibold text-white hover:bg-white/10 sm:rounded-lg sm:py-3">
+              <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2" />
+              </svg>
               Chiama {{ telefono }}
             </a>
           </div>
@@ -73,11 +82,34 @@ import NotFound from '../not-found/not-found';
             } @else {
               <!-- senza foto: icona solo da tablet in su (sul telefono sarebbe spazio vuoto) -->
               <div class="hidden sm:block">
-                <app-servizio-icona [slug]="s.slug" class="mb-8 size-16 rounded-2xl bg-blue-50 p-3.5 text-blue-800" />
+                <app-servizio-icona [slug]="s.slug" [class]="'mb-8 size-16 rounded-2xl p-3.5 ring-1 ' + tono(s.slug)" />
               </div>
             }
-            <h2 class="text-2xl font-bold text-slate-900 md:text-3xl">Il servizio</h2>
-            <p class="mt-4 text-lg leading-relaxed whitespace-pre-line text-slate-700">{{ s.descrizione }}</p>
+            <p class="font-semibold tracking-wide text-orange-700 uppercase">Di cosa ci occupiamo</p>
+            <h2 class="mt-2 text-2xl font-bold text-slate-900 md:text-3xl">Il servizio</h2>
+            <span class="mt-4 block h-1 w-12 rounded-full bg-orange-500" aria-hidden="true"></span>
+            <!--
+              Su telefono un testo lungo mostra le prime righe e "Leggi tutto": il testo è comunque
+              tutto nell'HTML (Google lo legge), viene solo accorciato a video.
+            -->
+            <div class="relative mt-5">
+              <p id="descrizione-servizio" class="text-[1.0625rem] leading-relaxed whitespace-pre-line text-slate-700 sm:line-clamp-none sm:text-lg"
+                [class.line-clamp-6]="accorciabile() && !testoAperto()">{{ s.descrizione }}</p>
+              @if (accorciabile() && !testoAperto()) {
+                <span class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-transparent sm:hidden" aria-hidden="true"></span>
+              }
+            </div>
+            @if (accorciabile()) {
+              <button type="button" (click)="testoAperto.set(!testoAperto())" aria-controls="descrizione-servizio"
+                [attr.aria-expanded]="testoAperto()"
+                class="mt-3 inline-flex min-h-11 items-center gap-1.5 font-semibold text-blue-800 sm:hidden">
+                {{ testoAperto() ? 'Mostra meno' : 'Leggi tutto' }}
+                <svg class="size-4 transition-transform" [class.rotate-180]="testoAperto()" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
+            }
           </div>
 
           @if (s.incluso.length) {
@@ -157,6 +189,14 @@ export default class ServizioPagina {
   readonly servizio = input<Servizio | null>(null);
 
   protected readonly foto = computed(() => fotoServizio(this.servizio()?.immagine));
+  protected readonly tono = tonoIcona;
+  /** Descrizione lunga: su telefono si mostra accorciata con "Leggi tutto". */
+  protected readonly accorciabile = computed(() => (this.servizio()?.descrizione.length ?? 0) > 320);
+  /** Si richiude passando a un altro servizio (il componente viene riusato dal router). */
+  protected readonly testoAperto = linkedSignal(() => {
+    this.servizio();
+    return false;
+  });
   protected readonly zona = SITE.indirizzo.citta;
   protected readonly anni = ANNI_ESPERIENZA;
   protected readonly telefono = SITE.telefono;
