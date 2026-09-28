@@ -1,18 +1,21 @@
-import { Component, computed, effect, inject, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Location, isPlatformBrowser } from '@angular/common';
+import { Component, PLATFORM_ID, computed, effect, inject, input, linkedSignal } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { FILTRI_VUOTI, Filtri, applicaFiltri, filtriDaQuery, queryDaFiltri } from '../../core/filtri-catalogo';
 import { CATEGORIE, CategoriaProdotto, Prodotto } from '../../core/prodotti-api';
 import { Servizio } from '../../core/servizi-api';
 import { Seo } from '../../core/seo';
 import { ANNI_ESPERIENZA, SITE } from '../../core/site.config';
 import { catalogoJsonLd } from '../../core/structured-data';
 import { CtaContatti } from '../../shared/cta-contatti';
+import { FiltriCatalogo } from '../../shared/filtri-catalogo';
 import { IntestazionePagina } from '../../shared/intestazione-pagina';
 import { ProdottoCard } from '../../shared/prodotto-card';
 
 /** Elenco dei modelli di una categoria del catalogo (es. /caldaie). */
 @Component({
   selector: 'app-catalogo',
-  imports: [RouterLink, ProdottoCard, CtaContatti, IntestazionePagina],
+  imports: [RouterLink, ProdottoCard, CtaContatti, IntestazionePagina, FiltriCatalogo],
   template: `
     <app-intestazione-pagina
       [etichetta]="'Catalogo · ' + anni + ' anni di esperienza'"
@@ -56,12 +59,23 @@ import { ProdottoCard } from '../../shared/prodotto-card';
         </ul>
       </div>
 
+      <!-- filtri: solo se ci sono abbastanza modelli da doverli cercare -->
+      @if (prodotti().length > 2) {
+        <app-filtri-catalogo class="mb-6 block" [prodotti]="prodotti()" [risultati]="visibili().length" [(filtri)]="filtri" />
+      }
+
       <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        @for (p of prodotti(); track p.slug) {
+        @for (p of visibili(); track p.slug) {
           <li class="rivela"><app-prodotto-card [prodotto]="p" /></li>
         } @empty {
-          <li class="text-slate-600 sm:col-span-2 lg:col-span-3">
-            Il catalogo è in aggiornamento: contattaci e ti consigliamo noi il modello più adatto.
+          <li class="rounded-2xl border-2 border-dashed border-slate-300 p-8 text-center text-slate-600 sm:col-span-2 lg:col-span-3">
+            @if (prodotti().length) {
+              <p class="font-semibold text-slate-900">Nessun modello corrisponde ai filtri</p>
+              <p class="mt-1">Prova a toglierne qualcuno, oppure contattaci: ti consigliamo noi il modello più adatto.</p>
+              <button type="button" (click)="filtri.set(filtriVuoti)" class="mt-4 font-semibold text-blue-800 underline">Azzera i filtri</button>
+            } @else {
+              Il catalogo è in aggiornamento: contattaci e ti consigliamo noi il modello più adatto.
+            }
           </li>
         }
       </ul>
@@ -89,6 +103,34 @@ export default class Catalogo {
   readonly prodotti = input<Prodotto[]>([]);
   readonly servizi = input<Servizio[]>([]);
 
+  /** Filtri dall'indirizzo della pagina (query string), es. /caldaie?marca=termika&ordina=livello. */
+  readonly q = input<string>();
+  readonly marca = input<string>();
+  readonly potenza = input<string>();
+  readonly classe = input<string>();
+  readonly prezzo = input<string>();
+  readonly smart = input<string>();
+  readonly ordina = input<string>();
+
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly location = inject(Location);
+
+  protected readonly filtriVuoti = FILTRI_VUOTI;
+  /** Stato dei filtri: parte dall'indirizzo, poi lo modifica la barra dei filtri. */
+  protected readonly filtri = linkedSignal<Filtri>(() =>
+    filtriDaQuery({
+      q: this.q(),
+      marca: this.marca(),
+      potenza: this.potenza(),
+      classe: this.classe(),
+      prezzo: this.prezzo(),
+      smart: this.smart(),
+      ordina: this.ordina(),
+    }),
+  );
+  protected readonly visibili = computed(() => applicaFiltri(this.prodotti(), this.filtri()));
+
   protected readonly site = SITE;
   protected readonly anni = ANNI_ESPERIENZA;
   protected readonly info = computed(() => CATEGORIE[this.categoria()]);
@@ -96,6 +138,18 @@ export default class Catalogo {
   protected readonly servizio = computed(() => this.servizi().find((s) => s.categoriaProdotti === this.categoria()));
 
   constructor() {
+    // i filtri finiscono nell'indirizzo senza una nuova navigazione (che riporterebbe la pagina in cima);
+    // il canonical resta /caldaie: per Google le pagine filtrate non sono pagine a sé
+    if (isPlatformBrowser(inject(PLATFORM_ID))) {
+      effect(() => {
+        const albero = this.router.createUrlTree([], { relativeTo: this.route, queryParams: queryDaFiltri(this.filtri()) });
+        const url = this.router.serializeUrl(albero);
+        if (url !== this.location.path()) {
+          this.location.replaceState(url);
+        }
+      });
+    }
+
     const seo = inject(Seo);
     effect(() => {
       const info = this.info();

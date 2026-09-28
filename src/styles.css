@@ -36,6 +36,13 @@
   }
 }
 
+/* stessa cosa con il pannello dei filtri del catalogo (su telefono sale dal basso) */
+@media (max-width: 639.98px) {
+  html.filtri-aperti {
+    overflow: hidden;
+  }
+}
+
 /*
  * Domande frequenti (<details>): il contenuto si apre scorrendo invece di comparire di colpo.
  * Solo nei browser che supportano ::details-content; negli altri si apre normalmente.
