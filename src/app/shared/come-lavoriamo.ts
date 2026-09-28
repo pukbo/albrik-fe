@@ -31,27 +31,25 @@ interface Passo {
         </div>
 
         <!-- percorso a tappe: cerchi numerati uniti da una linea, sotto (o accanto) la card di ogni passo -->
-        <ol class="relative mt-10 grid gap-6 md:mt-14 md:grid-cols-4">
-          <span class="linea" aria-hidden="true"></span>
-
+        <ol class="relative mt-12 grid gap-10 md:mt-14 md:grid-cols-4 md:gap-6">
           @for (p of passi; track p.titolo; let i = $index) {
             <!--
-              Il cerchio della tappa è a cavallo del bordo della card (a sinistra su telefono, in alto da
-              tablet in su): cerchio, card e linea formano un unico percorso.
+              Il cerchio della tappa è a cavallo del bordo superiore della card, al centro:
+              cerchio, card e linea formano un unico percorso.
             -->
-            <li class="rivela relative flex md:flex-col md:items-center" [style.animation-delay]="i * 80 + 'ms'">
+            <li class="passo rivela relative flex flex-col items-center" [style.animation-delay]="i * 80 + 'ms'">
               <!-- tappa: icona del passo in un cerchio arancione -->
-              <span class="tappa relative z-10 mt-5 -mr-7 inline-flex size-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-orange-700 text-white shadow-lg shadow-orange-600/30 ring-4 ring-white md:mt-0 md:mr-0 md:-mb-7" aria-hidden="true">
+              <span class="tappa relative z-10 -mb-7 inline-flex size-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-orange-700 text-white shadow-lg shadow-orange-600/30 ring-4 ring-white" aria-hidden="true">
                 <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
                   <path [attr.d]="p.icona" />
                 </svg>
               </span>
 
-              <div class="card group relative flex w-full min-w-0 flex-1 flex-col rounded-2xl bg-white py-5 pr-5 pl-11 shadow-sm ring-1 ring-slate-200 md:px-6 md:pt-11 md:pb-6 md:text-center">
+              <div class="card group relative flex w-full min-w-0 flex-1 flex-col rounded-2xl bg-white px-5 pt-11 pb-6 text-center shadow-sm ring-1 ring-slate-200 md:px-6">
                 <p class="text-xs font-semibold tracking-wider text-orange-700 uppercase">Passo {{ i + 1 }} di {{ passi.length }}</p>
                 <h3 class="mt-2 text-lg font-bold text-slate-900">{{ p.titolo }}</h3>
                 <p class="mt-1.5 flex-1 leading-relaxed text-slate-600">{{ p.testo }}</p>
-                <p class="mt-4 inline-flex self-start rounded-full bg-orange-50 md:self-center px-2.5 py-0.5 text-xs font-semibold text-orange-700 ring-1 ring-orange-100">
+                <p class="mt-4 inline-flex self-center rounded-full bg-orange-50 px-2.5 py-0.5 text-xs font-semibold text-orange-700 ring-1 ring-orange-100">
                   {{ p.etichetta }}
                 </p>
               </div>
@@ -63,25 +61,26 @@ interface Passo {
   `,
   styles: `
     /*
-     * Linea che unisce le tappe (cerchi da 3.5rem, centro a 1.75rem), lungo il bordo delle card:
-     * resta dietro le card e si vede negli spazi tra una e l'altra.
-     * Telefono: verticale a sinistra. Da tablet in su: orizzontale, dal centro del primo cerchio
-     * al centro dell'ultimo (colonne uguali con spazio di 1.5rem).
+     * Tratto tratteggiato che collega ogni tappa alla successiva, disegnato solo nello spazio tra le card
+     * (così non passa mai dietro una card, nemmeno mentre compare sfumata).
+     * Telefono: verticale, dal fondo della card al cerchio della successiva (spazio di 2.5rem).
+     * Da tablet in su: orizzontale, all'altezza del bordo superiore delle card (spazio di 1.5rem).
      */
-    .linea {
+    .passo:not(:last-child)::after {
+      content: '';
       position: absolute;
-      top: 1.75rem;
-      bottom: 1.75rem;
-      left: calc(1.75rem - 1px);
+      top: 100%;
+      left: calc(50% - 1px);
+      height: 2.5rem;
       border-left: 2px dashed #fdba74;
     }
 
     @media (min-width: 768px) {
-      .linea {
+      .passo:not(:last-child)::after {
         top: calc(1.75rem - 1px);
-        bottom: auto;
-        left: calc((100% - 4.5rem) / 8);
-        right: calc((100% - 4.5rem) / 8);
+        left: 100%;
+        width: 1.5rem;
+        height: 0;
         border-left: 0;
         border-top: 2px dashed #fdba74;
       }
