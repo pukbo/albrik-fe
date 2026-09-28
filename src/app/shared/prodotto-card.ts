@@ -13,50 +13,65 @@ import { SchedaTecnica } from './scheda-tecnica';
   imports: [RouterLink, SchedaTecnica],
   template: `
     <article class="carta group relative flex h-full flex-col rounded-3xl bg-gradient-to-b from-blue-900 to-blue-950 p-3 text-white">
-      <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white to-slate-200">
-        @if (foto(); as f) {
-          <!-- decorativa: il titolo del link descrive già il modello -->
-          <img [src]="f.src" [srcset]="f.srcset" sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-            [width]="f.larghezza" [height]="f.altezza" loading="lazy" decoding="async" alt=""
-            class="foto aspect-[4/3] w-full object-contain p-5" />
-        } @else {
-          <div class="flex aspect-[4/3] items-center justify-center" aria-hidden="true">
-            @if (p().categoria === 'CONDIZIONATORE') {
-              <!-- fiocco di neve -->
-              <svg viewBox="0 0 24 24" class="foto size-20 text-blue-800/40" fill="none" stroke="currentColor"
-                stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 2v20M4.2 7l15.6 10M4.2 17 19.8 7M9 3.5l3 2.5 3-2.5M9 20.5l3-2.5 3 2.5M3 10.5l3.6-.2L5 7M21 13.5l-3.6.2L19 17M3 13.5l3.6.2L5 17M21 10.5l-3.6-.2L19 7" />
-              </svg>
-            } @else {
-              <svg viewBox="0 0 64 64" class="foto size-24">
-                <path d="M32 5 C32 5 12 27 12 40 A20 20 0 0 0 52 40 C52 27 32 5 32 5 Z" fill="#1e40af" opacity="0.18" />
-                <path d="M32 28 C32 28 24 37 24 43 A8 8 0 0 0 40 43 C40 37 32 28 32 28 Z" fill="#f97316" opacity="0.7" />
-              </svg>
-            }
-          </div>
-        }
+      <!--
+        Telefono: foto piccola a sinistra e nome a destra (card compatta, stile app).
+        Da tablet in su: foto grande in alto, "carta da collezione".
+      -->
+      <div class="flex items-center gap-4 sm:block">
+        <div class="relative size-28 shrink-0 overflow-hidden rounded-2xl bg-gradient-to-br from-white to-slate-200 sm:size-auto">
+          @if (foto(); as f) {
+            <!-- decorativa: il titolo del link descrive già il modello -->
+            <img [src]="f.src" [srcset]="f.srcset" sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 112px"
+              [width]="f.larghezza" [height]="f.altezza" loading="lazy" decoding="async" alt=""
+              class="foto aspect-square size-full object-contain p-2 sm:aspect-[4/3] sm:h-auto sm:p-5" />
+          } @else {
+            <div class="flex aspect-square size-full items-center justify-center sm:aspect-[4/3] sm:h-auto" aria-hidden="true">
+              @if (p().categoria === 'CONDIZIONATORE') {
+                <!-- fiocco di neve -->
+                <svg viewBox="0 0 24 24" class="foto size-12 text-blue-800/40 sm:size-20" fill="none" stroke="currentColor"
+                  stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2v20M4.2 7l15.6 10M4.2 17 19.8 7M9 3.5l3 2.5 3-2.5M9 20.5l3-2.5 3 2.5M3 10.5l3.6-.2L5 7M21 13.5l-3.6.2L19 17M3 13.5l3.6.2L5 17M21 10.5l-3.6-.2L19 7" />
+                </svg>
+              } @else {
+                <svg viewBox="0 0 64 64" class="foto size-14 sm:size-24">
+                  <path d="M32 5 C32 5 12 27 12 40 A20 20 0 0 0 52 40 C52 27 32 5 32 5 Z" fill="#1e40af" opacity="0.18" />
+                  <path d="M32 28 C32 28 24 37 24 43 A8 8 0 0 0 40 43 C40 37 32 28 32 28 Z" fill="#f97316" opacity="0.7" />
+                </svg>
+              }
+            </div>
+          }
 
-        <p class="livello absolute top-3 left-3 font-mono font-bold" [attr.aria-label]="'Livello ' + p().valutazioni.livello + ' su 5'">
-          <span class="text-[0.6rem] tracking-widest text-orange-100" aria-hidden="true">LV</span>
-          <span class="text-base leading-none" aria-hidden="true">{{ p().valutazioni.livello }}</span>
-        </p>
-        @if (p().classeEnergetica; as classe) {
-          <p class="absolute top-3 right-3 rounded-lg bg-emerald-600 px-2 py-1 font-mono text-xs font-bold text-white shadow">
-            <span class="sr-only">Classe energetica </span>{{ classe }}
+          <p class="livello absolute top-2 left-2 font-mono font-bold sm:top-3 sm:left-3" [attr.aria-label]="'Livello ' + p().valutazioni.livello + ' su 5'">
+            <span class="text-[0.6rem] tracking-widest text-orange-100" aria-hidden="true">LV</span>
+            <span class="text-base leading-none" aria-hidden="true">{{ p().valutazioni.livello }}</span>
           </p>
-        }
+          @if (p().classeEnergetica; as classe) {
+            <p class="absolute top-3 right-3 hidden rounded-lg bg-emerald-600 px-2 py-1 font-mono text-xs font-bold text-white shadow sm:block">
+              <span class="sr-only">Classe energetica </span>{{ classe }}
+            </p>
+          }
+        </div>
+
+        <div class="min-w-0 flex-1 sm:px-2 sm:pt-4">
+          <p class="font-mono text-xs font-semibold tracking-[0.1em] text-orange-300 uppercase sm:tracking-[0.2em]">
+            {{ p().marca }}@if (potenza(); as pot) { <span class="whitespace-nowrap">&nbsp;· {{ pot }}</span> }
+          </p>
+          <h3 class="mt-1 text-xl leading-tight font-bold">
+            <a [routerLink]="p().percorso" class="after:absolute after:inset-0 after:rounded-3xl focus-visible:outline-none">
+              {{ p().modello }}<span class="sr-only"> di {{ p().marca }}</span>
+            </a>
+          </h3>
+          <!-- su telefono la classe energetica sta qui (sulla foto piccola non c'è spazio) -->
+          @if (p().classeEnergetica; as classe) {
+            <p class="mt-2 inline-flex rounded-md bg-emerald-600 px-2 py-0.5 font-mono text-xs font-bold text-white sm:hidden">
+              <span class="sr-only">Classe energetica </span>{{ classe }}
+            </p>
+          }
+        </div>
       </div>
 
-      <div class="flex flex-1 flex-col px-2 pt-4 pb-2">
-        <p class="font-mono text-xs font-semibold tracking-[0.2em] text-orange-300 uppercase">
-          {{ p().marca }}@if (potenza(); as pot) { · {{ pot }} }
-        </p>
-        <h3 class="mt-1 text-xl font-bold">
-          <a [routerLink]="p().percorso" class="after:absolute after:inset-0 after:rounded-3xl focus-visible:outline-none">
-            {{ p().modello }}<span class="sr-only"> di {{ p().marca }}</span>
-          </a>
-        </h3>
-        <p class="mt-1.5 line-clamp-2 flex-1 text-sm text-blue-100">{{ p().sommario }}</p>
+      <div class="flex flex-1 flex-col px-1 pt-3 pb-1 sm:px-2 sm:pt-1.5 sm:pb-2">
+        <p class="line-clamp-2 flex-1 text-sm text-blue-100">{{ p().sommario }}</p>
 
         <app-scheda-tecnica class="mt-4 block border-t border-white/10 pt-4" [prodotto]="p()" [soloBarre]="true" />
 

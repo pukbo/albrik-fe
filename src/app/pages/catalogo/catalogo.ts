@@ -28,11 +28,32 @@ import { ProdottoCard } from '../../shared/prodotto-card';
       </nav>
     </app-intestazione-pagina>
 
-    <section class="mx-auto max-w-6xl px-4 py-12 md:py-16" [attr.aria-label]="'Modelli di ' + info().plurale.toLowerCase()">
-      <div class="mb-10 grid gap-4 rounded-2xl bg-slate-100 p-6 text-slate-700 md:grid-cols-3">
-        <p><span class="font-bold text-slate-900">Livello (LV)</span>: la media di efficienza, tecnologia smart e silenziosità.</p>
-        <p><span class="font-bold text-slate-900">Barre da 1 a 5</span>: più sono piene, meglio è.</p>
-        <p><span class="font-bold text-slate-900">€ … €€€€€</span>: la fascia di prezzo, dalla più economica alla premium.</p>
+    <section class="mx-auto max-w-6xl px-4 py-10 md:py-16" [attr.aria-label]="'Modelli di ' + info().plurale.toLowerCase()">
+      <!-- come leggere le schede: ogni spiegazione con un esempio visivo accanto -->
+      <div class="mb-8 rounded-2xl bg-slate-100 p-5 md:mb-10 md:p-6">
+        <p class="text-xs font-semibold tracking-wider text-slate-500 uppercase">Come leggere le schede</p>
+        <ul class="mt-3 grid gap-3 md:grid-cols-3 md:gap-6">
+          <li class="flex items-center gap-3">
+            <span class="livello-esempio inline-flex w-16 shrink-0 items-baseline justify-center gap-1 rounded-lg py-1 font-mono font-bold text-white" aria-hidden="true">
+              <span class="text-[0.6rem] tracking-widest text-orange-100">LV</span><span>4</span>
+            </span>
+            <span class="text-sm text-slate-700"><span class="font-bold text-slate-900">Livello</span>: media di efficienza, smart e silenziosità</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="flex w-16 shrink-0 gap-0.5 rounded-lg bg-blue-950 p-1.5" aria-hidden="true">
+              @for (n of [1, 2, 3, 4, 5]; track n) {
+                <span class="h-1.5 flex-1 rounded-[2px]" [class]="n <= 4 ? 'bg-orange-500' : 'bg-white/15'"></span>
+              }
+            </span>
+            <span class="text-sm text-slate-700"><span class="font-bold text-slate-900">Barre da 1 a 5</span>: più sono piene, meglio è</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="w-16 shrink-0 rounded-lg bg-blue-950 py-1 text-center font-mono text-sm font-bold tracking-wider" aria-hidden="true">
+              <span class="text-orange-300">€€</span><span class="text-white/25">€€€</span>
+            </span>
+            <span class="text-sm text-slate-700"><span class="font-bold text-slate-900">Prezzo</span>: da € (economica) a €€€€€ (premium)</span>
+          </li>
+        </ul>
       </div>
 
       <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -53,6 +74,12 @@ import { ProdottoCard } from '../../shared/prodotto-card';
       </p>
     </section>
     <app-cta-contatti [servizioSlug]="servizio()?.slug" />
+  `,
+  styles: `
+    /* stesso badge del livello delle card */
+    .livello-esempio {
+      background: linear-gradient(135deg, #c2410c, #f97316);
+    }
   `,
 })
 export default class Catalogo {

@@ -29,13 +29,20 @@ const IN_EVIDENZA = 3;
         </ol>
       </nav>
       <!-- salto rapido alle categorie -->
-      <ul class="mt-8 flex flex-wrap gap-3">
+      <!-- su telefono due riquadri affiancati; da tablet in su pillole -->
+      <ul class="mt-8 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
         @for (s of sezioni(); track s.categoria) {
           <li>
-            <a routerLink="/catalogo" [fragment]="s.info.percorso" class="pulsante inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 font-semibold hover:bg-white/20">
-              <app-servizio-icona [slug]="s.info.percorso" class="size-5 text-orange-300" />
-              {{ s.info.plurale }}
-              <span class="rounded-full bg-white/15 px-2 text-xs">{{ s.prodotti.length }}</span>
+            <a routerLink="/catalogo" [fragment]="s.info.percorso"
+              class="pulsante flex h-full flex-col items-start gap-2 rounded-2xl bg-white/10 p-4 font-semibold ring-1 ring-white/15 hover:bg-white/20 sm:flex-row sm:items-center sm:rounded-full sm:px-4 sm:py-2 sm:ring-0">
+              <span class="inline-flex size-9 items-center justify-center rounded-full bg-white/10 sm:size-auto sm:bg-transparent">
+                <app-servizio-icona [slug]="s.info.percorso" class="size-5 text-orange-300" />
+              </span>
+              <span>
+                <span class="block">{{ s.info.plurale }}</span>
+                <span class="block text-xs font-medium text-blue-200 sm:hidden">{{ s.prodotti.length }} modelli</span>
+              </span>
+              <span class="hidden rounded-full bg-white/15 px-2 text-xs sm:inline">{{ s.prodotti.length }}</span>
             </a>
           </li>
         }
