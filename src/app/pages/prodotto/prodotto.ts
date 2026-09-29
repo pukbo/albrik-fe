@@ -36,16 +36,19 @@ import NotFound from '../not-found/not-found';
                 [width]="f.larghezza" [height]="f.altezza" fetchpriority="high" decoding="async" [alt]="p.nome"
                 class="mb-10 aspect-square w-full max-w-md rounded-2xl border border-slate-200 bg-white object-contain p-6" />
             }
-            <h2 class="text-2xl font-bold text-slate-900">Perché scegliere {{ p.nome }}</h2>
-            <p class="mt-4 text-lg leading-relaxed whitespace-pre-line text-slate-700">{{ p.descrizione }}</p>
+            <p class="font-semibold tracking-wide text-orange-700 uppercase">Il modello</p>
+            <h2 class="mt-2 text-2xl font-bold text-slate-900 md:text-3xl">Perché scegliere {{ p.nome }}</h2>
+            <span class="mt-4 block h-1 w-12 rounded-full bg-orange-500" aria-hidden="true"></span>
+            <p class="mt-5 text-lg leading-relaxed whitespace-pre-line text-slate-700">{{ p.descrizione }}</p>
 
             <div class="mt-8 rounded-2xl bg-slate-100 p-6 text-slate-700">
               <h2 class="text-lg font-bold text-slate-900">Installazione a {{ site.zonaServita }}</h2>
               <p class="mt-2">{{ info().installazione }}</p>
             </div>
 
-            <a [routerLink]="'/' + info().percorso" class="mt-8 inline-block font-semibold text-blue-800 hover:underline">
-              ← Confronta con gli altri modelli
+            <a [routerLink]="'/' + info().percorso"
+              class="pulsante mt-8 flex w-full items-center justify-center gap-2 rounded-lg border-2 border-blue-800 px-6 py-3 font-semibold text-blue-800 hover:bg-blue-50 sm:inline-flex sm:w-auto">
+              <span aria-hidden="true">←</span> Confronta con gli altri modelli
             </a>
           </div>
 

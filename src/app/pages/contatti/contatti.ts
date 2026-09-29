@@ -37,11 +37,12 @@ import { ModuloPreventivo } from '../../shared/modulo-preventivo';
         </div>
       </div>
       <div class="grid gap-10 lg:grid-cols-3">
-        <div class="entra rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-8 lg:col-span-2">
+        <div class="entra rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 md:p-8 lg:col-span-2">
           <app-modulo-preventivo [servizi]="servizi()" [servizioIniziale]="servizio()" [prodottoIniziale]="prodotto()" />
         </div>
 
-        <aside class="entra space-y-4 [animation-delay:150ms]" aria-label="Recapiti">
+        <!-- recapiti solo su schermi larghi: su telefono ci sono già i pulsanti in alto e il footer -->
+        <aside class="entra hidden space-y-4 [animation-delay:150ms] lg:block" aria-label="Recapiti">
           <a [href]="telefonoLink" class="premi flex gap-4 rounded-2xl border border-slate-200 p-6 hover:border-blue-300 hover:bg-blue-50">
             <span class="inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-800" aria-hidden="true">
               <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">

@@ -40,9 +40,13 @@ const INPUT =
       </div>
     } @else {
       <form novalidate (submit)="invia($event)" class="space-y-5" aria-labelledby="titolo-modulo">
-        <h2 id="titolo-modulo" class="text-2xl font-bold text-slate-900">Richiedi un preventivo</h2>
-        <p class="text-sm text-slate-600">I campi con * sono obbligatori.</p>
+        <div>
+          <h2 id="titolo-modulo" class="text-2xl font-bold text-slate-900">Richiedi un preventivo</h2>
+          <p class="mt-1 text-sm text-slate-600">Gratuito e senza impegno. I campi con * sono obbligatori.</p>
+        </div>
 
+        <!-- passi numerati: su telefono un modulo lungo sembra più leggero -->
+        <p class="passo-modulo"><span aria-hidden="true">1</span> I tuoi dati</p>
         <div class="grid gap-5 sm:grid-cols-2">
           <div>
             <label for="nome" class="font-medium text-slate-800">Nome e cognome *</label>
@@ -69,6 +73,7 @@ const INPUT =
           </div>
         </div>
 
+        <p class="passo-modulo"><span aria-hidden="true">2</span> Il lavoro</p>
         <div>
           <label for="servizio" class="font-medium text-slate-800">Servizio di interesse</label>
           <select id="servizio" [formField]="f.servizioSlug" [class]="input">
@@ -139,6 +144,7 @@ const INPUT =
           <input id="sito" type="text" tabindex="-1" autocomplete="off" [formField]="f.sito" />
         </div>
 
+        <p class="passo-modulo"><span aria-hidden="true">3</span> Invio</p>
         <div>
           <div class="flex items-start gap-3">
             <input id="consenso" type="checkbox" [formField]="f.consensoPrivacy"
@@ -169,6 +175,39 @@ const INPUT =
           {{ f().submitting() ? 'Invio in corso…' : 'Invia richiesta' }}
         </button>
       </form>
+    }
+  `,
+  styles: `
+    /* intestazione di un passo del modulo: numero in un cerchio arancione e linea sottile */
+    .passo-modulo {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      padding-top: 0.5rem;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #0f172a;
+    }
+
+    .passo-modulo::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e2e8f0;
+    }
+
+    .passo-modulo span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 9999px;
+      background: #c2410c;
+      font-size: 0.75rem;
+      color: white;
     }
   `,
 })
