@@ -2,12 +2,12 @@ import { Component, DOCUMENT, computed, effect, inject, input, model, signal } f
 import {
   FILTRI_VUOTI,
   Filtri,
-  ORDINAMENTI,
   Ordinamento,
   contaFiltriAttivi,
   opzioniFiltri,
 } from '../core/filtri-catalogo';
 import { Prodotto } from '../core/prodotti-api';
+import { MenuOrdina } from './menu-ordina';
 
 type Elenco = 'marche' | 'potenze' | 'classi';
 
@@ -46,6 +46,7 @@ const ICONE = {
  */
 @Component({
   selector: 'app-filtri-catalogo',
+  imports: [MenuOrdina],
   host: { '(document:keydown.escape)': 'aperto.set(false)' },
   template: `
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -72,22 +73,7 @@ const ICONE = {
           }
         </button>
 
-        <label class="relative flex-1 sm:flex-none">
-          <span class="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-sm text-slate-500" aria-hidden="true">Ordina:</span>
-          <span class="sr-only">Ordina per</span>
-          <select (change)="imposta({ ordina: $any(testo($event)) })"
-            class="w-full appearance-none rounded-xl border border-slate-300 bg-white py-3 pr-10 pl-[4.4rem] font-semibold text-slate-800 shadow-sm focus:border-blue-700 focus:ring-2 focus:ring-blue-200 focus:outline-none">
-            @for (o of ordinamenti; track o.valore) {
-              <option [value]="o.valore" [selected]="o.valore === filtri().ordina" [attr.selected]="o.valore === filtri().ordina ? '' : null">
-                {{ o.etichetta }}
-              </option>
-            }
-          </select>
-          <svg class="pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2 text-slate-500" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </label>
+        <app-menu-ordina class="flex-1 sm:w-60 sm:flex-none" [valore]="filtri().ordina" (valoreChange)="imposta({ ordina: $event })" />
       </div>
     </div>
 
@@ -536,7 +522,6 @@ export class FiltriCatalogo {
   readonly filtri = model.required<Filtri>();
 
   protected readonly aperto = signal(false);
-  protected readonly ordinamenti = ORDINAMENTI;
   protected readonly icone = ICONE;
   protected readonly opzioni = computed(() => opzioniFiltri(this.prodotti()));
   protected readonly attivi = computed(() => contaFiltriAttivi(this.filtri()));
